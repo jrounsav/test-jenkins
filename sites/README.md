@@ -1,5 +1,6 @@
 # asu_scholar
 For OpenScholar additions that are specific to the ASU Faculty Pages project.
+Testing
 
 This directory structure contains the settings and configuration files specific
 to your site or sites and is an integral part of multisite configuration.
