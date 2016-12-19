@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the ASU OS Lab Site feature.
+ */
+
+include_once 'asu_os_lab_site.features.inc';

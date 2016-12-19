@@ -1,0 +1,81 @@
+<?php 
+
+/*
+ * Implements hook_enable().
+ */
+function asu_os_vsite_enable() {
+
+  // Include our new type here.
+  variable_set('subsite_bundles',array('personal','project', 'lab'));
+
+  module_load_install('vsite');
+  // Make sure we have all the OG fields needed.
+  _vsite_initilize_group_fields();
+
+  // Add new custom field to track request for a custom domain.
+  $field_name = 'use_custom_domain';
+
+  // Make sure the field doesn't already exist.
+  if (!field_info_field($field_name)) {
+
+    // Create the field.
+    $field = array(
+      'field_name' => $field_name,
+      'type' => 'list_text',
+      'cardinality' => 1,
+      'settings' => array(
+        'allowed_values' => array(
+          'none' => 'None',
+          'pending' => 'Pending',
+          'granted' => 'Granted',
+        ),
+      ),
+      'entity_types' => array('node'),
+    );
+    field_create_field($field);
+
+    // Create the instances on the content type bundles referenced in
+    // vsite_vsite_og_node_type_info().
+    $instance = array( 'field_name' => $field_name,
+      'entity_type' => 'node',
+      'bundle' => 'personal',
+      'label' => 'Use Custom Domain',
+      'description' => 'Custom Domain Request Status',
+    );
+    field_create_instance($instance);
+    $instance = array( 'field_name' => $field_name,
+      'entity_type' => 'node',
+      'bundle' => 'project',
+      'label' => 'Use Custom Domain',
+      'description' => 'Custom Domain Request Status',
+    );
+    field_create_instance($instance);
+    $instance = array( 'field_name' => $field_name,
+      'entity_type' => 'node',
+      'bundle' => 'department',
+      'label' => 'Use Custom Domain',
+      'description' => 'Custom Domain Request Status',
+    );
+    field_create_instance($instance);
+    $instance = array( 'field_name' => $field_name,
+      'entity_type' => 'node',
+      'bundle' => 'lab',
+      'label' => 'Use Custom Domain',
+      'description' => 'Custom Domain Request Status',
+    );
+    field_create_instance($instance);
+
+    watchdog('asu_os_vsite', t('!field_name was added successfully.', array('!field_name' => $field_name)));
+  }
+  else {
+    watchdog('asu_os_vsite', t('!field_name already exists.', array('!field_name' => $field_name)));
+  }
+
+}
+
+/*
+ * Implements hook_update_N().
+ */
+//function asu_os_vsite_update_7001() {
+//
+//}

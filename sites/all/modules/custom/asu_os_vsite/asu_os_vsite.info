@@ -1,0 +1,8 @@
+name = ASU VSite Additions for Open Scholar
+description = VSite Additions to Open Scholar for ASU.
+core = 7.x
+package = ASU
+configure = admin/config/openscholar/asu_os_vsite
+version = 7.x
+;dependencies[] = asu_brand
+;files[] = plugins/asu_brand_os_box.footer.inc

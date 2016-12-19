@@ -1,0 +1,20 @@
+<?php 
+
+/*
+ * Implements hook_enable().
+ */
+function asu_os_tweaks_enable() {
+
+
+}
+
+/*
+ * Renames spaces var so it's distinct from global var
+ */
+//function asu_brand_os_update_7001() {
+//  db_update('spaces_overrides')
+//    ->fields(array('object_id' => 'asu_brand_os_vsite_api_key'))
+//    ->condition('object_type', 'variable')
+//    ->condition('object_id', 'asu_brand_os_api')
+//    ->execute();
+//}

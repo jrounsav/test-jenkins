@@ -1,0 +1,249 @@
+<?php
+/**
+ * Implements hook_menu().
+ *
+ * Sets specific URL's as admin-accessible locations to query the EDNA database. Also setting aside the admin config space.
+ */
+function asu_ednaquery_menu(){
+  
+  $items = array();
+  
+  $items['admin/config/asu_ednaquery'] = array(
+    'title' => 'ASU EDNA Query',
+    'description' => 'OAuth settings',
+    'position' => 'left',
+    'weight' => -100,
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer site configuration'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  
+  $items['admin/config/asu_ednaquery/settings'] = array(
+    'title' => 'ASU EDNA OAuth Settings',
+    'description' => 'Configure the EDNA OAuth credentials',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asu_ednaquery_form'),
+    'access arguments' => array('access administration pages'),
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  return $items;
+  
+}
+/**
+ * Implements hook_form().
+ *
+ * Creates the admin menu for the ednaquery module.
+ */
+function asu_ednaquery_form($form, &$form_state){
+  
+  $dev = 'https://edna-dev.asu.edu/edna-ws/services/oauth/checkAccess/v1.0';
+  $test = 'https://edna-test.asu.edu/edna-ws/services/oauth/checkAccess/v1.0';
+  $live = 'https://edna.asu.edu/edna-ws/services/oauth/checkAccess/v1.0';
+  
+  $form = array();
+  
+  $form['asu_ednaquery_url'] = array(
+    '#type' => 'select',
+    '#title' => t('Environment'),
+    '#options' => array( $dev => t('Dev'), $test => t('Test'), $live => t('Live')),
+    '#default_value' => $dev,
+    '#description' => t('The EDNA environment that you are configuring.'),
+    '#required' => TRUE,
+  );
+  
+  $form['asu_ednaquery_consumer_key'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Consumer Key'),
+    '#size' => 60,
+    '#maxlength' => 200,
+    '#description' => t('Insert the OAuth consumer key for the environment chosen above'),
+    '#required' => TRUE,
+  );
+  
+  $form['asu_ednaquery_consumer_secret'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Consumer Secret'),
+    '#size' => 60,
+    '#maxlength' => 200,
+    '#description' => t('Insert the OAuth consumer secret for the environment chosen above'),
+    '#required' => TRUE,
+  );
+  
+  return system_settings_form($form);
+  
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Hijack the default admin save functionality for a custom submit function.
+ */
+function asu_ednaquery_form_alter(&$form, &$form_state, $form_id) {   
+  
+  if ($form_id == "asu_ednaquery_form") {
+    $form['#submit'][] = 'asu_ednaquery_submit';
+  }
+  
+}
+
+/**
+ * Implements hook_form_submit().
+ *
+ * Custom submit to encode the consumer key and secret.
+ */
+function asu_ednaquery_submit($form, &$form_state){
+  
+  $form_state['input']['asu_ednaquery_consumer_key'] = base64_encode($form_state['input']['asu_ednaquery_consumer_key']);
+  variable_set('asu_ednaquery_consumer_key', $form_state['input']['asu_ednaquery_consumer_key']);
+  
+  $form_state['input']['asu_ednaquery_consumer_secret'] = base64_encode($form_state['input']['asu_ednaquery_consumer_secret']);
+  variable_set('asu_ednaquery_consumer_secret', $form_state['input']['asu_ednaquery_consumer_secret']);
+  
+}
+
+/**
+ * Query against the EDNA server for true/false value, given an asurite ID and an
+ * EDNA servicepath
+ *
+ * Base on the ASURITE and group affiiation. (ie. Faculty, Staff, Student)
+ */
+function asu_ednaquery_get($asurite, $servicePath, $accessGroups = array()) {
+
+  // Try to load the library and check if that worked.
+  if (($library = libraries_load('oauth-php')) && !empty($library['loaded'])) {
+
+    if (!empty($accessGroups)) {
+      for($i = 0; $i < count($accessGroups); $i++){
+
+        $group = strtolower($accessGroups[$i]->name);
+        $fullPath = $servicePath . '.' . $group;
+
+        $result = asu_ednaquery_check_access($asurite, $fullPath);
+
+        if ($result === TRUE) {
+          return TRUE;
+        }
+      }
+
+      return FALSE;
+
+    } else {
+      $result = asu_ednaquery_check_access($asurite, $servicePath);
+
+      if ($result === TRUE) {
+        return TRUE;
+      } else {
+        return FALSE;
+      }
+    }
+  } else {
+    watchdog( 'asu_ednaquery', 'PHP-Oauth library needed for asu_ednaquery module.');
+  }
+
+  return FALSE;
+
+}
+
+/**
+ * Query against the EDNA server for true/false value, given an asurite ID and an
+ * EDNA servicepath
+ *
+ *
+ */
+function asu_ednaquery_check_access($asurite, $servicePath) {
+
+  $environment = variable_get('asu_ednaquery_url');
+  $consumerKey = base64_decode(variable_get('asu_ednaquery_consumer_key'));
+  $consumerSecret = base64_decode(variable_get('asu_ednaquery_consumer_secret'));
+
+  $key = $consumerKey;
+  $secret = $consumerSecret;
+  $url = $environment;
+  $options = array('consumer_key' => $key, 'consumer_secret' => $secret);
+  OAuthStore::instance("2Leg", $options);
+  $method = "GET";
+
+  $params = array("servicePath" => $servicePath, "principal" => $asurite);
+
+  try
+  {
+    // Obtain a request object for the request we want to make
+    $request = new OAuthRequester($url, $method, $params);
+
+
+    // Sign the request, perform a curl request and return the results,
+    // throws OAuthException2 exception on an error
+    // $result is an array of the form: array ('code'=>int, 'headers'=>array(), 'body'=>string)
+    $result = $request->doRequest();
+
+    $response = $result['body'];
+
+    $xml = simplexml_load_string($response, "SimpleXMLElement", LIBXML_NOCDATA);
+    $json = json_encode($xml);
+    $array = json_decode($json,TRUE);
+
+    if (!empty($array['permitAccess']) && $array['permitAccess'] == "true") {
+      return TRUE;
+    } else {
+      return FALSE;
+    }
+  }
+  catch(OAuthException2 $e)
+  {
+    error_log($e->getMessage());
+    return FALSE;
+  }
+}
+
+/**
+ * Implements hook_libraries_info().
+ *
+ * Library must always use  OAuth1.
+ *
+ */
+function asu_ednaquery_libraries_info(){
+
+  // oauth-php library expexted in path like sites/all/libraries/oauth-php
+  $libraries['oauth-php'] = array(
+    'name' => 'OAuth PHP Library',
+    'vendor url' => 'https://code.google.com/p/oauth-php/',
+    'download url' => 'https://code.google.com/p/oauth-php/',
+    'version callback' => 'asu_ednaquery_version_callback',
+    'files' => array(
+      'php' => array(
+        'library/OAuthDiscovery.php',
+        'library/OAuthException2.php',
+        'library/OAuthRequest.php',
+        'library/OAuthRequester.php',
+        'library/OAuthRequestLogger.php',
+        'library/OAuthRequestSigner.php',
+        'library/OAuthRequestVerifier.php',
+        'library/OAuthServer.php',
+        'library/OAuthSession.php',
+        'library/OAuthStore.php',
+        'library/body/OAuthBodyContentDisposition.php',
+        'library/body/OAuthBodyMultipartFormdata.php',
+        'library/discovery/xrds_parse.php',
+        'library/session/OAuthSessionAbstract.class.php',
+        'library/session/OAuthSessionSESSION.php',
+        'library/signature_method/OAuthSignatureMethod_HMAC_SHA1.php',
+        'library/signature_method/OAuthSignatureMethod_MD5.php',
+        'library/signature_method/OAuthSignatureMethod_PLAINTEXT.php',
+        'library/signature_method/OAuthSignatureMethod_RSA_SHA1.php',
+        'library/signature_method/OAuthSignatureMethodclass.php',
+        'library/store/OAuthStore2Leg.php',
+      ),
+    ),
+  );
+  
+  return $libraries;
+}
+
+/**
+ * Truthy callback to override version requirement for hook_libraries_info()
+ */
+function asu_ednaquery_version_callback(){
+  return TRUE;
+}

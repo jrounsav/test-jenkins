@@ -1,0 +1,205 @@
+<?php
+/**
+ * @file
+ * ASU Role Provisioning Module
+ *
+ * @author Colton Testamarck (colt@asu.edu)
+ */
+
+define('ASU_ROLE_PROVISIONING_ADMIN_CONFIG_SETTINGS', 'Administer ASU Role Provisioning Configuration');
+define('ASU_ROLE_PROVISIONING_PAGE_ACCESS', 'access asu role provisioning');
+define('ASU_ROLE_PROVISIONING_CONFIGS', variable_get('asu_role_provisioning_configs', NULL));
+
+/**
+ * Implements hook_permission().
+ * Adds custom permission to configure the module
+ */
+function asu_role_provisioning_permission() {
+  $perms[ASU_ROLE_PROVISIONING_ADMIN_CONFIG_SETTINGS] = array(
+    'title' => t('Administer ASU Role Provisioning Configuration'),
+    'description' => t('Configure ASU Role Provisioning'),
+  );
+
+  return $perms;
+}
+
+/**
+ * Implements hook_menu()
+ * Role Provisioning Admin Config
+ *
+ * @return array
+ */
+function asu_role_provisioning_menu() {
+  $items = array();
+
+  // Admin menu.
+  $items['admin/config/people/asu_role_provisioning'] = array(
+    'title' => t('ASU Role Provisioning Settings'),
+    'description' => 'Settings for ASU Role Provisioning',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asu_role_provisioning_admin'),
+    'access callback' => 'user_access',
+    'access arguments' => array(ASU_ROLE_PROVISIONING_ADMIN_CONFIG_SETTINGS),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_admin()
+ * Creates a form for setting the root for the department hierarchy by department ID
+ */
+function asu_role_provisioning_admin($form, &$form_state) {
+
+  $form = array();
+
+  $roles = user_roles();
+  $solr_schema = asu_dir_utilities_get_solr_schema();
+  $schema_options = array();
+  $role_options = array();
+
+
+  /*foreach($solr_schema['fields'] as $field) {
+    $schema_options[$field['name']] = $field['name'];
+  }*/
+
+  $affil_options = array(
+    'FacultyWeb' => 'Faculty'
+  );
+
+  foreach($roles as $role) {
+    $role_options[$role] = $role;
+  }
+
+  $config = array();
+
+  if (ASU_ROLE_PROVISIONING_CONFIGS != NULL) {
+    $config = drupal_json_decode(ASU_ROLE_PROVISIONING_CONFIGS);
+  }
+
+  $form['rules'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Add Rule'),
+    '#weight' => 0,
+    '#multiple' => TRUE
+  );
+
+  $form['rules']['arp_affil'] = array(
+    '#prefix' => '<div id="arp-affil-select" >',
+    '#suffix' => '</div>',
+    '#type' => 'textfield',
+    '#title' => 'EDNA Group',
+  );
+
+  $form['rules']['roles'] = array(
+    '#prefix' => '<div id="arp-roles">',
+    '#suffix' => '</div>',
+    '#title' => 'Role to Grant',
+    '#description' => t('Any selected roles will be assigned to any user meeting the criteria upon login.'),
+    '#type' => 'select',
+    '#multiple' => TRUE,
+    '#options' => $role_options
+  );
+
+  $form['rules']['config'] = array(
+    '#prefix' => '<div id="arp-role-config" style="display:none;">',
+    '#suffix' => '</div>',
+    '#type' => 'textarea',
+    '#default_value' => $config
+  );
+
+  $form['rules']['save_rule'] = array(
+    '#prefix' => '<div id="arp-save-config" ><button id="arp-save" class="form-submit">Add Rule</button>',
+    '#suffix' => '</div>',
+    '#type' => 'markup',
+    // Send in part of the form_state array to know if this is initial page load or not
+    //'#submit' => array('asu_role_provisioning_add_rule'),
+  );
+
+  $form['show_rules'] = array(
+
+    '#markup' => '<h2>Configured Rules</h2><div id="arp-show-config" class="arp-display"></div>',
+  );
+
+  $settings = array(
+    'configs' => $config
+  );
+
+  $form['#attached']['css'][] = drupal_get_path('module', 'asu_role_provisioning') . '/css/asu_role_provisioning_admin.css';
+
+  drupal_add_js(drupal_get_path('module', 'asu_role_provisioning') . '/js/asu_role_provisioning_admin_form.js');
+  drupal_add_js(array('asu_role_provisioning' => $settings), 'setting');
+
+  $form['#submit'][] = "asu_role_provisioning_admin_submit";
+  return system_settings_form($form);
+}
+
+
+/**
+ * Clear caches for module when form is submitted
+ */
+function asu_role_provisioning_admin_submit($form, &$form_state) {
+  $configs = $form['rules']['config']['#value'];
+  variable_set('asu_role_provisioning_configs', $configs);
+}
+
+/**
+ * Implements hook_user_login
+ *
+ * Check Solr for employee affiliations, and assign appropriate roles
+ *
+ * @param $edit
+ * @param $account
+ */
+function asu_role_provisioning_user_login(&$edit, $account) {
+  $configs = ASU_ROLE_PROVISIONING_CONFIGS;
+  global $user;
+
+
+  if (isset($account->cas_user) && !empty($configs)) {
+    $asurite = $account->cas_user['name'];
+
+    $configs = drupal_json_decode($configs);
+
+    foreach($configs as $conf) {
+      $access = asu_ednaquery_get($asurite, $conf['params']);
+      $roles = $conf['roles'];
+
+      asu_role_provisioning_grant_or_revoke_roles($user, $roles, $access);
+
+    }
+  }
+}
+
+/**
+ * Revoke or grant user roles
+ *
+ * @param $the_user - user object to remove or grant roles
+ * @param $roles - array of role name strings
+ * @param $grant - if set to TRUE, grants role.  if set to false, revokes.
+ * @throws \Exception
+ */
+function asu_role_provisioning_grant_or_revoke_roles($the_user, $roles, $grant) {
+
+  $user_roles = $the_user->roles;
+
+  if ($grant) {
+    foreach ($roles as $role) {
+      $new_role = user_role_load_by_name($role);
+      $user_roles[$new_role->rid] =  $new_role->name;
+    }
+  } else {
+    foreach ($roles as $role) {
+      $new_role = user_role_load_by_name($role);
+
+      if (isset($user_roles[$new_role->rid])) {
+        unset($user_roles[$new_role->rid]);
+      }
+    }
+  }
+
+  user_save($the_user, array('roles' => $user_roles));
+}
+
+

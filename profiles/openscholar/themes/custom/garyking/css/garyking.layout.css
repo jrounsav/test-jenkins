@@ -1,0 +1,40 @@
+/* Layout CSS */
+
+.sidebar    { 
+    margin-top: 290px;
+}
+
+h1#page-title
+ {
+    width: 980px;
+}
+
+.front .block.block-boxes-os_boxes_columns.front-top-cloumn {
+    width: 100%;
+}
+
+.front .block-boxes-os_boxes_tabs {
+width: 104%;
+min-height: 425px;
+}
+
+.front-top-cloumn .region-two-66-33-second,
+.front-top-cloumn .region-two-66-33-first {
+      height: 300px;
+  }
+  
+  
+.front-top-cloumn .region-two-66-33-first {
+           width: 69.9%;
+    border-right: 1px solid #fff;
+  }
+  .front-top-cloumn .region-two-66-33-second {
+      width: 30%;
+  }
+
+
+.research-by-topic
+ {
+    width: 990px;
+    margin: 0 auto;
+}

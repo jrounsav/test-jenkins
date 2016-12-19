@@ -1,0 +1,19 @@
+<?php
+/**
+ * @file
+ * os_presentations.install
+ */
+
+/**
+ * Change the presentation date range to -10/+5 years.
+ */
+function os_presentations_update_7000() {
+  features_revert(array('os_presentations' => array('field_instance')));
+}
+
+/**
+ * Clarify the labels in the "Add Presentation" form (node/add/presentation)
+ */
+function os_presentations_update_7001() {
+  features_revert(array('os_presentations' => array('field_instance')));
+}

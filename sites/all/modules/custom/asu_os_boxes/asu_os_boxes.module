@@ -1,0 +1,111 @@
+<?php
+/**
+ * @file
+ * Code for the ASU Brand for Open Scholar integration.
+ */
+
+include_once 'asu_os_boxes.features.inc';
+
+/**
+ * @file asu_brand_os.module
+ *
+ */
+
+
+/*****************************************************************************
+HOOKS
+ ******************************************************************************/
+
+/**
+ * Implements hook_menu().
+ */
+function asu_os_boxes_menu() {
+  $items ['admin/config/openscholar/asu_os_boxes'] = array(
+    'title' => t( 'More ASU elements for Open Scholar' ),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asu_os_boxes_admin'),
+    'file' => 'asu_os_boxes.admin.inc',
+    'access arguments' => array('access administration pages'),
+  );
+  return $items;
+}
+
+/**
+ * Implements of hook_boxes_plugins().
+ */
+function asu_os_boxes_boxes_plugins(){
+
+  $info = array();
+  $path = drupal_get_path('module', 'asu_os_boxes') . '/plugins';
+
+  // Subtitle
+  $info['asu_os_boxes_site_info'] = array(
+    'title' => 'ASU Site Title',
+    'description' => 'The title of your site',
+    //'css' => $css,
+    'tags' => array(
+      'ASU'
+    ),
+    'handler' => array(
+      'class' => 'asu_os_boxes_site_info',
+      'file' => 'asu_os_boxes_site_info.inc',
+      'path' => $path,
+      'parent' => 'os_boxes_default'
+    )
+  );
+
+  // Main Menu
+  $info['asu_os_boxes_main_menu'] = array(
+    'title' => 'ASU Main site menu',
+    'description' => 'The main menu for your site',
+    //'css' => $css,
+    'tags' => array(
+      'ASU'
+    ),
+    'handler' => array(
+      'class' => 'asu_os_boxes_main_menu',
+      'file' => 'asu_os_boxes_main_menu.inc',
+      'path' => $path,
+      'parent' => 'os_boxes_default'
+    )
+  );
+
+  $info['asu_os_boxes_hero'] = array(
+    'title' => 'ASU Hero Widget',
+    'description' => 'A 100% width hero image with data.',
+    'tags' => array('ASU'),
+    'handler' => array(
+      'class' => 'asu_os_boxes_hero',
+      'file' => 'asu_os_boxes_hero.inc',
+      'path' => $path . '/asu_os_boxes_hero',
+      'parent' => 'os_boxes_default',
+    ),
+  );
+
+  return $info;
+}
+
+/*****************************************************************************
+CALLBACKS
+ ******************************************************************************/
+
+/*****************************************************************************
+FORMS
+ ******************************************************************************/
+
+/*****************************************************************************
+INTERNAL
+ ******************************************************************************/
+
+/*****************************************************************************
+THEME
+ ******************************************************************************/
+
+/*****************************************************************************
+API
+ ******************************************************************************/
+
+/*****************************************************************************
+DEVELOPER NOTES
+ ******************************************************************************/
+

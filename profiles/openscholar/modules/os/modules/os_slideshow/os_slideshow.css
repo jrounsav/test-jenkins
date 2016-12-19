@@ -1,0 +1,17 @@
+#flex-pager>.flex-page-link {
+	text-align: center;
+	width: 1em;
+	display: inline-block;
+}
+
+#flex-pager>.active {
+  border-bottom: 1px #aaa solid;
+}
+
+#media-format-form fieldset .fieldset-legend {
+    text-transform:none;
+}
+
+#media-format-form fieldset .fieldset-wrapper {
+    padding-top:10px;
+}

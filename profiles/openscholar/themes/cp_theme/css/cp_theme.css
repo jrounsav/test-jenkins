@@ -1,0 +1,1140 @@
+body {
+    font-family: helvetica, arial, sans-serif;
+}
+#page {
+    padding: 0;
+}
+#branding h1.page-title {
+    color: #555;
+    font-size: 2.3em;
+}
+#branding {
+    overflow: hidden;
+    padding: 30px 20px 0 38px;
+    position: relative;
+    background-color: #FFF;
+}
+/* GENERAL CP STYLES */
+
+a {
+    color: #4E84C4;
+}
+strong {
+    color: #444;
+}
+fieldset {
+    background: #f1f1f1;
+}
+.vertical-tabs-panes fieldset {
+    background: #FFF;
+}
+.region-footer {
+    background: #000;
+    color: #FFFFFF;
+    height: 30px;
+    bottom: 0;
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+    text-align: right;
+}
+region-footer a {
+    color: #FFFFFF;
+}
+.region-footer .region-inner {
+    padding: 10px 20px 0 15px;
+    z-index: 1;
+}
+h3 {
+    margin: 0;
+}
+table {
+    font-size: 1em;
+}
+input.form-text,
+textarea {
+    font-size: 13px;
+    height: auto;
+    padding: 6px 7px;
+    background: url('../../os_basetheme/images/form-input-bg.gif') repeat-x scroll left top #FFFFFF;
+    border: 1px solid #CDCDCD;
+}
+#og-vocabulary-add-more-wrapper select.form-select {
+    height: 120px;
+}
+html.js input.form-autocomplete {
+    background-position: 100% 8px;
+}
+html.js input.throbbing {
+    background-position: 100% -15px !important;
+}
+.os-help-link {
+    background: url("../images/cp-sprite.png") no-repeat 0 -150px;
+    display: block;
+    float: right;
+    margin-top: 2px;
+    padding: 0;
+    height: 19px;
+    width: 19px;
+}
+.os-help-link:hover {
+    background: url("../images/cp-sprite.png") no-repeat 0 -170px;
+}
+.view-os-files-private ul {
+    list-style-type: none !important;
+    list-style: none !important;
+}
+.cp-controls-wrapper .add_new {
+    float: left;
+    display: inline;
+    background: url("../images/scholarbase-sprite.png") no-repeat scroll 3px -379px #A1D4A1 !important;
+    border-radius: 5px 5px 5px 5px;
+    float: left;
+    margin: 0 22px 0 0;
+    padding: 0 8px 0 22px !important;
+    text-decoration: none !important;
+}
+/* Special behavior for action link and help position on CP > Content > Find: Files */
+
+.view-id-cp_files .cp-controls-wrapper {
+    margin: 11px 29px 10px 0;
+}
+.view-id-cp_files .cp-controls-wrapper .add_new {
+    margin-right: 0;
+}
+.view-id-cp_files .cp-controls-wrapper .add_new {
+    line-height: 15px !important;
+    display: inline-block;
+    padding: 5px 10px !important;
+    border: none;
+    font-size: 13px;
+    font-weight: bold;
+    color: #FFF !important;
+    text-shadow: 0px -1px 0px rgba(30, 30, 30, 0.25);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    background: rgb(61, 155, 19) !important;
+    text-decoration: none !important;
+    float: right;
+}
+.view-os-files-private .cp-controls-wrapper .add_new {
+    background: #2C890D !important;
+    padding: 5px 10px !important;
+    border-radius: 5px 5px 5px 5px;
+    float: none;
+    margin: 0;
+    text-decoration: none !important;
+    color: #FFF;
+    font-weight: bold;
+}
+a#edit-cancel,
+a.form-cancel {
+    cursor: pointer;
+    padding: 5px 17px;
+    margin-bottom: 1em;
+    margin-right: 1em;
+    /* LTR */
+    
+    color: #5a5a5a;
+    text-align: center;
+    font-weight: normal;
+    font-size: 1.077em;
+    font-family: "Lucida Grande", Verdana, sans-serif;
+    border: 1px solid #e4e4e4;
+    border-bottom: 1px solid #b4b4b4;
+    border-left-color: #d2d2d2;
+    border-right-color: #d2d2d2;
+    background: url('/themes/seven/images/buttons.png') 0 0 repeat-x;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+}
+a.form-cancel:hover {
+    text-decoration: none;
+}
+.form-actions .form-submit,
+.form-actions #edit-delete,
+.form-actions #edit-delete--2 {
+    display: inline-block;
+}
+.form-actions .os-delete-link {
+    color: #f83535;
+    text-decoration: underline;
+    font-size: 1.1em;
+}
+/* CTools MODAL OVERRIDES */
+
+#modalContent {
+    top: 0 !important;
+    color: #666;
+    position: fixed !important;
+}
+div.ctools-modal-content .form-item label {
+    float: none;
+}
+div.ctools-modal-content {
+    color: #555;
+    margin: 0;
+    text-align: left;
+    background: #fff;
+    -moz-box-shadow: 0 4px 26px rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: 0 4px 26px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 26px rgba(0, 0, 0, 0.5);
+}
+div.ctools-modal-content .modal-title {
+    color: #666;
+    font-size: 20px;
+    font-weight: normal;
+}
+#modal-content {
+    padding: 20px 0 20px 25px;
+}
+div.ctools-modal-content {
+    height: 100% !important;
+    border: none;
+}
+div.ctools-modal-content .modal-header {
+    background: #EFEFEF;
+    border-bottom: 2px solid #C4C2C2;
+    height: 24px;
+    padding: 10px;
+}
+div.ctools-modal-content .modal-header a {
+    float: right;
+    color: transparent;
+    background: url('../images/cp-sprite.png') no-repeat 0 -547px;
+    width: 30px;
+    height: 30px;
+}
+div.ctools-modal-content .modal-content {
+    padding: 12px 12px 0 12px;
+    overflow: auto;
+    width: 575px;
+    height: 400px;
+}
+#modalContent .spaces-customize-form .buttons input.form-submit {
+    margin-right: 140px;
+}
+div.ctools-modal-content .button-div-wrapper {
+    display: inline;
+}
+div.ctools-modal-content a.close:hover {
+    text-decoration: none;
+}
+div.ctools-modal-content a.close img {
+    position: relative;
+    top: 1px;
+    display: none;
+}
+div.ctools-modal-content .modal-content .modal-throbber-wrapper {
+    text-align: center;
+}
+div.ctools-modal-content .modal-content .modal-throbber-wrapper img {
+    margin-top: 160px;
+}
+.helper {
+    margin-top: 10px;
+    display: block;
+}
+/** Column Widget Styles */
+
+.downarrow {
+    padding-right: 12px;
+    background: url('../../os_basetheme/images/scholarbase-sprite.png') 0 -553px no-repeat;
+}
+.helper.columns {
+    width: 968px !important;
+}
+.helper.columns .downarrow {
+    background-position: 51px -553px;
+}
+.formlabel {
+    color: #444;
+    font-size: 12px;
+    font-weight: bold;
+}
+/** OVERLAY MODAL OVERRIDES **/
+
+#overlay-close,
+#overlay-close:hover {
+    background: url('../images/cp-sprite.png') no-repeat 0 -547px;
+    width: 30px;
+    height: 30px;
+    position: relative;
+    margin: -28px 10px;
+}
+#overlay-titlebar {
+    padding: 7px 10px 17px;
+    position: relative;
+    white-space: nowrap;
+    z-index: 100;
+    background: #EFEFEF;
+    border-bottom: 2px solid #C4C2C2;
+    height: 24px;
+}
+#overlay-title {
+    float: left;
+    margin: 0;
+    padding: 0.3em 0;
+    color: #666;
+    font-size: 24px;
+    font-weight: normal;
+}
+#overlay-tabs {
+    margin: -30px 0 0;
+    right: 50px;
+}
+.page-node-add.page-node-add-biblio #overlay,
+.page-node-edit.node-type-biblio #overlay {
+    max-width: 930px;
+    min-width: 850px;
+}
+form.confirmation {
+    margin-top: 20px;
+}
+form.confirmation span.emphasize {
+    font-weight: bold;
+}
+/* OVERRIDES WITH TABS IN MODAL - EXPERIMENTAL */
+
+#overlay-tabs {
+    border-bottom: 1px solid #CCCCCC;
+    margin: 20px 0px 40px 75px;
+    position: relative;
+}
+#overlay-content {
+    padding: 2.5em 1em;
+}
+#overlay-tabs li a,
+#overlay-tabs li.active a,
+#overlay-tabs li.active a.active,
+#overlay-tabs li.active a:active,
+#overlay-tabs li.active a:visited {
+    margin-bottom: -1px;
+    padding-bottom: 0px;
+}
+#overlay-tabs li.active a,
+#overlay-tabs li.active a.active,
+#overlay-tabs li.active a:active,
+#overlay-tabs li.active a:visited {
+    background-color: #EFEFEF;
+    color: #555555;
+}
+#overlay-tabs li a,
+#overlay-tabs li a:active,
+#overlay-tabs li a:visited,
+#overlay-tabs li a:hover {
+    color: #FFFFFF;
+    margin-bottom: -1px;
+    padding-bottom: 0px;
+}
+/** CP TABLE STYLES **/
+
+table.spaces td.option,
+table.spaces td.storage {
+    width: 13%;
+}
+#edit-menu-table .section-heading {
+    background: #E1E2DC;
+    border-bottom: 2px solid #C4C2C2;
+    border-top: 2px solid #C4C2C2;
+    height: 25px;
+    text-transform: uppercase;
+}
+#edit-menu-table .section-heading a {
+    text-transform: none;
+    margin-left: 1em;
+}
+#edit-menu-table .section-heading .add-new-link {
+    margin-left: 0;
+}
+#edit-menu-table td:first-child {
+    width: 40%;
+}
+#user-register-form {
+    background: #f1f1f1;
+    padding: 15px;
+    border: 1px solid #CCC;
+}
+.cp-add-new-user ul {
+    list-style-type: none;
+}
+table th label {
+    text-transform: none;
+}
+/* CP/BUILD MENU */
+
+.page-cp-build-menu table thead {
+    display: none;
+}
+#edit-menu-table,
+#cp-menu-build-form {
+    width: 100%;
+}
+#cp-appearance-theme-picker-form select {
+    max-width: 90px;
+    overflow: hidden;
+}
+#theme-header-single h2,
+#cp-appearance-theme-picker-form #theme-header-featured h2,
+#cp-appearance-theme-picker-form #theme-header-other h2 {
+    font-weight: normal;
+}
+#cp-appearance-theme-picker-form #theme-header-single p,
+#cp-appearance-theme-picker-form #theme-header-featured p {
+    color: #777;
+    font-size: 15px;
+    margin: -8px 0 28px 0;
+}
+/* CP/BUILD LAYOUT */
+
+.page-cp-build-layout #content {
+    width: 854px;
+}
+/* CP FEATURES */
+
+form#spaces-features-form td.actions a {
+    background-image: url("../images/cp-sprite.png");
+    background-position: 0 -575px;
+    background-repeat: repeat-y;
+    color: #105EA9;
+    height: 25px;
+    padding: 2px 0 5px 22px;
+    width: 100px;
+    margin-left: 6px;
+    position: relative;
+}
+#spaces-features-form select {
+    float: left;
+}
+/** VSITE OS LOGIN CONTAINER STYLES **/
+
+body.page-cp.page-cp-account {
+    background: #EEE;
+}
+body.page-cp.page-cp-account #messages {
+    margin: 0 auto -80px;
+    width: 560px;
+}
+.page-cp.page-cp-account #columns {
+    background: #FFFFFF;
+    width: 540px;
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    margin: 100px auto;
+    border: 3px solid #8996A0;
+}
+.page-cp.page-cp-account #columns #main-content-header {
+    background: #DDD;
+    margin: -10px -8px;
+    padding: 7px;
+}
+/* PUBLICATIONS SETTING FORM IN MODAL */
+
+fieldset .fieldset-legend {
+    text-transform: none;
+}
+.os_publications-customize-form .column-left,
+.os_publications-customize-form #comment_settings {
+    float: left;
+    clear: left;
+}
+.os_publications-customize-form .column-left {
+    width: 48%;
+}
+.os_publications-customize-form #comment_settings {
+    width: 100%;
+}
+.os_publications-customize-form .form-actions {
+    clear: both;
+}
+.os_publications-customize-form .column-right {
+    float: right;
+    width: 48%;
+    clear: right;
+    margin-bottom: 20px;
+}
+.tabledrag-toggle-weight-wrapper {
+    display: none;
+}
+table.biblio-contributors {
+    min-width: 550px;
+    max-width: 650px;
+}
+.field-name-og-vocabulary table,
+.field-name-og-vocabulary table th,
+.field-name-og-vocabulary table tr,
+table#field-biblio-extra-values,
+table#field-biblio-extra-values th,
+#edit-biblio-authors table,
+#edit-biblio-authors table tr,
+#edit-biblio-authors table,
+table.biblio-contributors,
+table.biblio-contributors tr.odd,
+table.biblio-contributors tr.even {
+    border: none;
+    background: #FFF;
+    margin: 0;
+}
+.field-name-og-vocabulary table td,
+table#field-biblio-extra-values td {
+    padding: 8px 0;
+}
+#edit-biblio-authors table td,
+table.biblio-contributors td {
+    padding: 0;
+}
+#edit-biblio-authors table td.biblio-contributor-type {
+    padding-right: 1em;
+}
+.biblio-contributors .draggable {
+    height: 40px;
+}
+#edit-og-vocabulary input.form-submit,
+.node-biblio-form #edit-field-biblio-extra input.form-submit,
+#edit-biblio-authors #edit-add-more {
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 1em;
+    margin-right: 1em;
+    margin-left: 2.99em;
+    color: #0074BD;
+    text-align: center;
+    font-weight: normal;
+    font-size: 1em;
+    font-family: "Lucida Grande", Verdana, sans-serif;
+    border: none;
+    border-bottom: 1px solid #0074BD;
+    border-left-color: transparent;
+    border-right-color: transparent;
+    background: none;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+.biblio-contributor input.form-submit {
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 0;
+    margin-right: 0;
+    color: #5a5a5a;
+    text-align: center;
+    font-weight: normal;
+    font-size: 1em;
+    font-family: "Lucida Grande", Verdana, sans-serif;
+    border: none;
+    border-bottom: none;
+    border-left-color: none;
+    border-right-color: none;
+    background: url('../images/cp-sprite.png') 0 -411px no-repeat;
+    -moz-border-radius: none;
+    -webkit-border-radius: none;
+    border-radius: none;
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 20px;
+    display: inline-block;
+}
+table.biblio-contributors tr:first-child input.form-submit {
+    display: none;
+}
+.biblio-contributor input.form-text {
+    float: left;
+    margin-right: 8px;
+}
+.form-item-biblio-url,
+.form-item-biblio-url-title,
+.node-biblio-form .form-item-biblio-section,
+.node-biblio-form .form-item-biblio-number-of-volumes,
+.node-biblio-form .form-item-biblio-number,
+.node-biblio-form .form-item-biblio-date,
+.node-biblio-form .form-item-biblio-edition,
+.node-biblio-form .form-item-biblio-volume,
+.node-biblio-form .form-item-biblio-issue,
+.node-biblio-form .form-item-biblio-pages {
+    display: inline-block;
+    margin-right: 15px;
+    vertical-align: top;
+    width: 165px;
+}
+.form-item-biblio-url,
+.form-item-biblio-url-title {
+    width: 255px;
+}
+.form-item-biblio-url input.form-text,
+.form-item-biblio-url-title input.form-text,
+.node-biblio-form .form-item-biblio-section input.form-text,
+.node-biblio-form .form-item-biblio-number-of-volumes input.form-text,
+.node-biblio-form .form-item-biblio-number input.form-text,
+.node-biblio-form .form-item-biblio-date input.form-text,
+.node-biblio-form .form-item-biblio-edition input.form-text,
+.node-biblio-form .form-item-biblio-volume input.form-text,
+.node-biblio-form .form-item-biblio-issue input.form-text,
+.node-biblio-form .form-item-biblio-pages input.form-text {
+    width: 100px;
+}
+.form-item-biblio-url .description,
+.form-item-biblio-url-title .description,
+.form-item-biblio-url input.form-text,
+.form-item-biblio-url-title input.form-text {
+    width: 270px;
+}
+#edit-biblio-notes-value,
+#edit-biblio-abst-e-value {
+    height: 60px;
+}
+.form-item-biblio-abst-e-value ~ .description {
+    margin-bottom: 20px;
+}
+.form-item-biblio-year {
+    margin-top: 10px;
+}
+#edit-biblio-year {
+    width: 35px;
+}
+.form-item.form-type-radio {
+    margin-left: 10px;
+    font-size: 1em;
+    font-weight: normal;
+}
+#edit-biblio-year-coded .form-item.form-type-radio {
+    margin-left: 0;
+}
+#edit-biblio-year-coded .form-item label.option {
+    font-size: 0.85em;
+}
+fieldset#edit-biblio-year-group {
+    background: none;
+    border: none;
+    font-weight: bold;
+}
+fieldset#edit-biblio-year-group .fieldset-legend,
+fieldset#edit-biblio-year-group .fieldset-wrapper {
+    padding-left: 0;
+}
+html.js fieldset.collapsible#edit-publication-extras .fieldset-wrapper .fieldset-legend {
+    background: none;
+    padding-left: 0;
+}
+.field-name-field-biblio-extra table.field-multiple-table,
+.field-name-field-biblio-extra table.field-multiple-table tr,
+.field-name-field-biblio-extra table.field-multiple-table th,
+html.js fieldset.collapsible#edit-publication-extras .fieldset-wrapper fieldset {
+    background-color: #FFF;
+    border: none;
+}
+#edit-publication-extras {
+    background-color: #FFF;
+}
+html.js fieldset.collapsible#edit-publication-extras .fieldset-wrapper {
+    padding-left: 15px;
+}
+html.js fieldset.collapsible#edit-publication-extras .form-wrapper .fieldset-wrapper {
+    padding-left: 0;
+}
+.field-widget-image-image {
+    background: #f1f1f1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    width: 94%;
+    margin: 20px 0;
+}
+#edit-field-biblio-extra .description {
+    margin-left: 35px;
+}
+/**	 QUICK TAB CREATION **/
+
+.page-os-widget #tabs {
+    background: #F1F1F1;
+    border: 1px solid #CCCCCC;
+    padding-left: 10px;
+}
+.page-os-widget #tabs .panel,
+.page-os-widget #tabs fieldset .fieldset-wrapper {
+    padding: 0;
+}
+.page-os-widget .ui-state-disabled,
+.ui-widget-content .ui-state-disabled {
+    opacity: 1;
+}
+.page-os-widget .ui-tabs .ui-tabs-nav li a {
+    border-radius: 10px 10px 0 0;
+    -webkit-border-radius: 10px 10px 0 0;
+    -moz-border-radius: 10px 10px 0 0;
+    padding: 5px;
+}
+/* Shrinks the node form to take up less vertical space. */
+
+#biblio-node-form .form-item {
+    padding: 0;
+}
+form.node-form input.form-text {
+    padding: 3px;
+}
+form.node-form fieldset .fieldset-wrapper {
+    padding-bottom: 0;
+}
+form.node-form fieldset {
+    padding: 2.0em 0px 0px;
+    margin: 1em 0px 0.5em;
+}
+fieldset#edit-5 {
+    padding-top: 0;
+}
+/* Shrinks the biblio node form to take up less vertical space. */
+
+.field-name-field-biblio-extra table.field-multiple-table td .form-item.form-type-textfield,
+#field-biblio-extra-values td .form-item.form-type-textfield {
+    float: left;
+    width: 45%;
+    padding-right: 4%;
+}
+fieldset#edit-biblio-authors {
+    background-color: transparent;
+    border: 0 none;
+    padding: 0;
+    margin: 0;
+}
+fieldset#edit-biblio-authors .fieldset-wrapper {
+    padding-left: 0;
+}
+fieldset#edit-biblio-authors .fieldset-legend {
+    padding-left: 0;
+    margin-top: 0;
+    text-transform: none;
+}
+/**
+ * Media Browser tweaks
+ */
+
+.ui-front {
+    z-index: 1000;
+}
+/** STYLE IMPROVEMENTS BASED ON MOCKUP https://d2r1vs3d9006ap.cloudfront.net/s3_images/1010882/pubform_expanded.png **/
+
+.node-form .form-region-right {
+    border-left: 1px dotted #777777;
+    padding-left: 15px;
+    width: 27%;
+}
+form.node-form .form-region-main input a,
+.node-form .form-region-right .node-form-options a {
+    color: #0074BD;
+}
+form.node-form .form-region-right input.form-text {
+    width: 85% !important;
+}
+form.node-form .form-region-main input.form-text {
+    max-width: 85%;
+}
+form.node-form .form-region-right fieldset {
+    background: none repeat scroll 0% 0% transparent;
+    border: medium none;
+    margin: 1em 0px;
+    padding: 2.7em 0px 0.1em;
+    width: 100%;
+}
+form.node-form .form-region-right fieldset legend {
+    background: none repeat scroll 0% 0% #F1F1F1;
+}
+form.node-form .fieldset-legend span.summary {
+    color: #777;
+    display: block;
+    font-size: 0.8em;
+    margin-left: 0px;
+}
+form.node-form .form-region-main .fieldset-legend span.summary {
+    display: inline;
+}
+.field-name-field-biocv-pdf-upload {
+    margin-bottom: 40px;
+}
+html.js .form-region-right fieldset.collapsible .fieldset-legend
+/*form.node-form.overlay-processed .form-region-right  fieldset.collapsed .fieldset-legend*/
+
+{
+    border: 1px solid #CCCCCC;
+    display: block;
+    font-weight: normal;
+    line-height: 13px;
+    min-height: 25px;
+    padding: 6px 15px 4px;
+    text-transform: none;
+    width: 89%;
+    background-color: #f1f1f1;
+}
+html.js fieldset.collapsible .fieldset-legend {
+    background-image: none;
+}
+html.js fieldset.collapsible > legend .fieldset-legend:before {
+    content: '';
+    position: absolute;
+    background-image: url("../images/cp-sprite.png");
+    background-position: -10px -452px;
+    background-repeat: no-repeat;
+    width: 15px;
+    height: 15px;
+    top: 3px;
+    left: 0;
+}
+html.js fieldset.collapsed > legend .fieldset-legend:before
+/*form.node-form.overlay-processed .form-region-right  fieldset.collapsed .fieldset-legend:before*/
+
+{
+    background-position: -10px -436px;
+}
+.form-region-main a.fieldset-title,
+form.node-form .form-region-right .fieldset-title {
+    font-size: 1.08em;
+    font-weight: normal;
+}
+form.node-form {
+    border: medium none;
+}
+form.node-form .form-region-right .fieldset-wrapper {
+    border-bottom: 1px solid #CCCCCC;
+    border-left: 1px solid #CCCCCC;
+    border-right: 1px solid #CCCCCC;
+    padding-top: 15px;
+    padding-right: 15px;
+    width: 89%;
+}
+.form-region-right .field-prefix {
+    line-height: 15px;
+    display: block;
+    max-width: 85%;
+    word-wrap: break-word;
+    font-size: 11px;
+}
+a.tabledrag-handle .handle {
+    background-image: url('../images/cp-sprite.png');
+    background-position: 8px -15px;
+}
+a.tabledrag-handle-hover .handle {
+    background-position: 8px -35px;
+}
+.delete-subtheme a {
+    background: url('../images/cp-sprite.png') 0 -600px no-repeat;
+    padding-left: 17px;
+}
+.zip-pull-button a {
+    background: url('../images/cp-sprite.png') 0 -614px no-repeat #0a4476;
+    padding: 15px 7px 8px 22px;
+}
+.git-pull-button a {
+    background: url('../images/cp-sprite.png') 0 -645px no-repeat #0a4476;
+    padding: 15px 7px 8px 22px;
+}
+form#cp-user-edit-membership-form .form-item-group-manager {
+    margin: 15px 0 0;
+}
+h1.biblio-type-prefix {
+    float: left;
+    margin: 18px 10px 0px 0px;
+    padding: 0.3em 0;
+    color: #666;
+    font-size: 18px;
+    font-weight: normal;
+}
+.form-item-biblio-type select {
+    font-size: 18px;
+    color: #666;
+}
+.form-item-biblio-type span.form-required {
+    visibility: hidden;
+}
+#field-biblio-extra-values thead tr th {
+    text-transform: none;
+}
+/* Term tree reference */
+
+.term-reference-tree {
+    border: 1px solid #CCC;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.term-reference-tree > ul {
+    margin-left: 0;
+}
+ul.term-reference-tree-level {
+    list-style-type: none;
+}
+.term-reference-tree-button,
+.no-term-reference-tree-button {
+    float: left;
+}
+.no-term-reference-tree-button {
+    background: none;
+}
+/** I think these aren't used anymore, but I'd need someone who remembers what they're used for to confirm
+.term-reference-tree-button {
+  background: url('../../os_basetheme/images/scholarbase-sprite.png') 2px -449px no-repeat;
+}
+
+.term-reference-tree-button.term-reference-tree-collapsed {
+  background: url('../../os_basetheme/images/scholarbase-sprite.png') 6px -433px no-repeat;
+}
+
+.field-widget-og-vocab-complex .expand {
+	 background: url('../../os_basetheme/images/scholarbase-sprite.png') 0 -509px no-repeat;
+	 padding-left:14px;
+}
+
+.field-widget-og-vocab-complex .collapse {
+	 background: url('../../os_basetheme/images/scholarbase-sprite.png') 0 -529px no-repeat;
+	 padding-left:14px;
+	 margin-left:10px;
+}
+ */
+/* PUB FORM EXTERNAL URL SECTIONON */
+
+#edit-url .form-item-biblio-url-title {
+    margin-right: 0;
+    width: 138px;
+}
+#edit-url .form-item-biblio-url-title.editing {
+    width: 195px;
+}
+#edit-url .form-item-biblio-url-title.editing #edit-biblio-url-title {
+    text-align: right;
+}
+#edit-biblio-url-title {
+    border: none;
+    background: url('../images/cp-sprite.png') no-repeat 0 -475px #FFFFFF;
+    padding-left: 25px;
+    color: #0074BD;
+    text-decoration: underline;
+    cursor: pointer;
+}
+#edit-biblio-url-title:focus {
+    background: url('../../os_basetheme/images/form-input-bg.gif') repeat-x scroll left top #FFFFFF;
+    border: 1px solid #CDCDCD;
+    padding-left: 0;
+    color: #444;
+    text-decoration: none;
+}
+#edit-url .form-item-biblio-url .description {
+    width: 450px;
+}
+.view-cp-content .form-item-vocab {
+    float: left;
+    /* LTR */
+    
+    margin-right: 20px;
+    /* LTR */
+}
+.view-cp-content #edit-node-titles {
+    clear: both;
+}
+.view-cp-content #edit-vocab {
+    padding: 5px;
+}
+/** Message icon overrides */
+
+div.status,
+div.warning,
+div.error {
+    background-image: none;
+}
+div.messages:before {
+    position: absolute;
+    content: '';
+    background-image: url('../../os_basetheme/images/scholarbase-sprite.png');
+    height: 24px;
+    width: 24px;
+    top: 8px;
+    left: 8px;
+}
+div.status:before {
+    background-position: -38px -231px;
+}
+div.warning:before {
+    background-position: -38px -262px;
+}
+div.error:before {
+    background-position: -72px -231px;
+}
+/** Toolbar overrides */
+
+#toolbar-home a span {
+    background: url('../../os_basetheme/images/scholarbase-sprite.png') no-repeat 0 -845px;
+}
+#toolbar div.toolbar-menu a.toggle {
+    background: url('../../os_basetheme/images/scholarbase-sprite.png') 0 -820px no-repeat;
+}
+#toolbar a.toggle {
+    background-image: url('../../os_basetheme/images/scholarbase-sprite.png');
+    background-position: 0px -859px;
+}
+.form-item-create-as-subsite {
+    margin-bottom: 35px;
+}
+#toolbar a.toggle-active {
+    background-position: -27px -859px;
+}
+#toolbar div.toolbar-menu ul li a[data-drawer] {
+    background-image: none;
+    position: relative;
+}
+#toolbar div.toolbar-menu ul li a[data-drawer]:after {
+    content: '';
+    background-image: url('../../os_basetheme/images/scholarbase-sprite.png');
+    background-position: -16px -850px;
+    position: absolute;
+    width: 10px;
+    height: 5px;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    right: 10px;
+}
+#toolbar div.toolbar-menu ul#toolbar-help li a {
+    background-image: none;
+    position: relative;
+}
+#toolbar div.toolbar-menu ul#toolbar-help li a:before {
+    content: '';
+    position: absolute;
+    background-image: url('../../os_basetheme/images/scholarbase-sprite.png');
+    background-position: 0 -885px;
+    height: 15px;
+    width: 15px;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+    left: 10px;
+}
+/** End Toolbar Overrides */
+/** Layout Form Overrides */
+
+.widget-container a.edit {
+    background-image: url("../images/cp-sprite.png");
+    background-position: -12px -691px;
+    width: 12px;
+}
+.widget-container a.edit:hover {
+    background-image: url("../images/cp-sprite.png");
+    background-position: 0px -691px;
+}
+#cp-layout-unused-widgets div.ctools-dropdown a.ctools-dropdown-link {
+    background: none;
+    position: relative;
+}
+#cp-layout-unused-widgets div.ctools-dropdown a.ctools-dropdown-link:before {
+    content: '';
+    position: absolute;
+    background-image: url("../images/cp-sprite.png");
+    background-position: -10px -452px;
+    height: 15px;
+    width: 15px;
+    top: 0;
+    left: -4px;
+    background-repeat: no-repeat;
+}
+#edit-layout a.edit {
+    background-image: url("../images/cp-sprite.png");
+    background-position: 0 -675px;
+}
+#og-vocabulary-add-more-wrapper #edit-og-vocabulary-und .fieldset-wrapper {
+    border: 1px solid #ccc;
+    background: #f1f1f1;
+    padding: 5px;
+    width: 96%;
+}
+/** News edit page calendar field override */
+
+.node-news-form .date-padding {
+    padding: 0;
+    border: 1px solid #ccc;
+    background: #f1f1f1;
+    padding: 5px;
+    width: 96%;
+}
+#site-visibility-help-text {
+    display: none;
+    font-weight: normal;
+    padding: 8px 0;
+}
+.select2-container {
+    min-width: 300px;
+}
+.form-item-field-biblio-pub-month-und .select2-container,
+.form-item-field-biblio-pub-day-und .select2-container {
+    min-width: 65px;
+}
+#edit-biblio-year-group .select2-container .select2-choice {
+    line-height: 23px;
+    font-size: 13px !important;
+    font-weight: normal;
+    height: 23px;
+}
+
+/* CKEDITOR - WYSIWYG */
+
+
+body.cke_editable blockquote {
+    border-left: 2px solid #807E6D;
+    font-style: italic;
+    margin: 1em 3em;
+    padding-left: 1em;
+}
+
+span.cke_button__break_icon {
+    background-position-y: -1px;
+    background-size: 20px !important;
+    width: 18px;
+}
+
+.cke_ltr span.cke_button__anchor_icon {
+    background: url('/profiles/openscholar/themes/cp_theme/images/cp-sprite.png?123') no-repeat 0 -711px !important;
+}
+
+.view-content ~ .item-list ul.pager {
+    margin-top: 30px !important;
+    letter-spacing: -1em;
+}
+.view-content ~ .item-list ul.pager li.pager-current,
+.view-content ~ .item-list ul.pager li:hover {
+    background-color: #efefef;
+}
+.view-content ~ .item-list ul.pager li a:hover {
+    text-decoration: none;
+}
+li.pager-previous + li.pager-ellipsis {
+    display: none;
+}
+.view-content ~ .item-list ul.pager li {
+    border-left: 1px solid #dededc !important;
+    border-top: 1px solid #dededc !important;
+    border-bottom: 1px solid #dededc !important;
+    letter-spacing: normal;
+    padding: 0.7em !important;
+}
+.view-content ~ .item-list ul.pager li.pager-first {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+.view-content ~ .item-list ul.pager li.pager-last {
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-right: 1px solid #dededc !important;
+}
+.view-content ~ .item-list ul.pager li.pager-next,
+.view-content ~ .item-list ul.pager li.pager-previous {
+	font-weight: bold;
+	}
+
+.file img.file-icon {
+    width: 16px;
+}
+body.cke_editable img.media-element.file-default {
+    padding-right: 15px;
+}
+
+body.cke_editable img.media-element.file-default[style*="float:"][style*="right;"] {
+    padding-left: 15px;
+    padding-right: 0;
+}

@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function os_boxes_schema() {
+  $schema['cache_os_boxes'] = drupal_get_schema_unprocessed('system', 'cache');
+  return $schema;
+}
+
+/**
+ * Enables oEmbedprovider and Web Widgets modules.
+ */
+function os_boxes_update_7001(&$sb) {
+  $modules = array(
+    'oembedprovider',
+    'web_widgets',
+  );
+  module_enable($modules);
+
+  return t('Enabled oEmbedprovider and Web Widgets modules');
+}
+
+/**
+ * Create new cache table {cache_os_boxes}.
+ */
+function os_boxes_update_7002(&$status) {
+  $schema['cache_os_boxes'] = drupal_get_schema_unprocessed('system', 'cache');
+  db_create_table('cache_os_boxes', $schema['cache_os_boxes']);
+}
+
+/**
+ * Set the boxes cache back on.
+ */
+function os_boxes_update_7003() {
+  variable_set('os_boxes_cache_enabled', TRUE);
+  return t('The boxes caching turned back on.');
+}

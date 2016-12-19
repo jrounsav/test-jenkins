@@ -1,0 +1,25 @@
+.asu_os_hero_wrapper, .asu_os_hero {
+    height:285px;
+}
+.asu_os_hero_wrapper .asu_os_hero, .asu_os_hero_wrapper .asu_os_hero h2{
+    color: white;
+}
+.asu_os_hero_contact{
+    margin-right: 40px;
+    font-weight: bold;
+}
+
+.asu_os_hero_picture img {
+    height: 130px;
+}
+
+.asu_os_hero_associations div {
+    font-weight: bold;
+}
+.asu_os_hero .row {
+    margin-top: 5px;
+    margin-bottom: 15px;
+}
+.asu_os_hero .container {
+    width: 1170px;
+}

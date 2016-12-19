@@ -1,0 +1,146 @@
+<?php
+/**
+ * @file
+ * ASU Dir Utilities Module
+ *
+ * @author Colton Testamarck (colt@asu.edu)
+ */
+
+include_once 'inc/asu_dir_utilities_functions.inc';
+
+// Access Permission Constants
+define('ASU_DIR_UTILITIES_ADMIN_CONFIG_SETTINGS', 'Administer ASU Directory Configuration');
+define('ASU_DIR_UTILITIES_PAGE_ACCESS', 'access asu directory');
+
+// Form Field Variable Constants
+define('ASU_DIR_UTILITIES_TOP_LEVEL_PS_ID', 'ASU');
+define('ASU_DIR_UTILITIES_TOP_LEVEL_DEPT_NID', 1342);
+define('ASU_DIR_UTILITIES_FORM_CACHE_DURATION', 1);//# of hours, set to 1 initially
+define('ASU_DIR_UTILITIES_MODULE_NAME', 'asu_dir_utilities');
+
+define('ASU_DIR_UTILITIES_ISEARCH_URL', variable_get('asu_dir_utilities_isearch_url', 'https://isearch.asu.edu'));
+define('ASU_DIR_UTILITIES_SOLR_ENV', variable_get('asu_dir_utilities_solr_endpoint', 'https://asudir-solr.asu.edu/asudir/directory/'));
+define('ASU_DIR_UTILITIES_TREE_ENDPOINT', variable_get('asu_dir_utilities_tree_endpoint', 'https://isearch.asu.edu/endpoints/dept_tree/json'));
+define('ASU_DIR_UTILITIES_EMPLOYEE_TYPES_ENDPOINT', variable_get('asu_dir_utilities_employee_types_endpoint', 'https://isearch.asu.edu/endpoints/employee-types'));
+define('ASU_DIR_UTILITIES_FACULTY_TITLES_ENDPOINT', variable_get('asu_dir_utilities_faculty_titles_endpoint', 'https://isearch.asu.edu/endpoints/faculty-title-taxonomy'));
+define('ASU_DIR_UTILITIES_SOLR_SCHEMA_ENDPOINT', variable_get('asu_dir_utilities_solr_schema_endpoint', 'https://asudir-solr.asu.edu/asudir/directory/schema/fields'));
+
+/**
+ * Implements hook_permission().
+ * Adds custom permission to configure the module
+ */
+function asu_dir_utilities_permission() {
+  $perms[ASU_DIR_UTILITIES_ADMIN_CONFIG_SETTINGS] = array(
+    'title' => t('Administer ASU Directory Configuration'),
+    'description' => t('Configure ASU Directory Utilities'),
+  );
+
+  return $perms;
+}
+
+/**
+ * Implements hook_menu()
+ * Role Provisioning Admin Config
+ *
+ * @return array
+ */
+function asu_dir_utilities_menu() {
+  $items = array();
+
+  // Admin menu.
+  $items['admin/config/search/asu_dir_utilities_settings'] = array(
+    'title' => t('ASU Dir Utilities Settings'),
+    'description' => 'Settings for ASU Dir Utilities',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asu_dir_utilities_admin'),
+    'access callback' => 'user_access',
+    'access arguments' => array(ASU_DIR_UTILITIES_ADMIN_CONFIG_SETTINGS),
+    'type' => MENU_NORMAL_ITEM,
+  );
+
+  return $items;
+}
+
+
+/**
+ * Implements hook_admin()
+ * Creates a form for setting the root for the department hierarchy by department ID
+ */
+function asu_dir_utilities_admin($form, &$form_state) {
+  $form = array();
+
+  // Environment to determine which Solr Server URL to access
+  // (Actual URLs supplied by WSI Settings Endpoint based on chosen environment)
+  $form['asu_dir_utilities_isearch_url'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Directory URL (iSearch)',
+    '#default_value' => ASU_DIR_UTILITIES_ISEARCH_URL,
+    '#description' => t('The Solr server you would like to pull data from.'),
+    '#required' => TRUE,
+  );
+
+  $form['asu_dir_utilities_solr_env'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Solr Environment',
+    '#default_value' => ASU_DIR_UTILITIES_SOLR_ENV,
+    '#description' => t('The Solr server you would like to pull data from.'),
+    '#required' => TRUE,
+  );
+
+  $form['asu_dir_utilities_solr_schema_endpoint'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Solr Schema Endpoint',
+    '#default_value' => ASU_DIR_UTILITIES_SOLR_SCHEMA_ENDPOINT,
+    '#description' => t('The Solr schema endpoint.'),
+    '#required' => TRUE,
+  );
+
+  $form['asu_dir_utilities_tree_endpoint'] = array(
+    '#type' => 'textfield',
+    '#title' => 'ASU Directory Tree Enpoint',
+    '#default_value' => ASU_DIR_UTILITIES_TREE_ENDPOINT,
+    '#description' => t('The URL of the directory tree endpoint.'),
+    '#required' => TRUE,
+  );
+
+  $form['asu_dir_utilities_types_endpoint'] = array(
+    '#type' => 'textfield',
+    '#title' => 'ASU Employee Types Endpoint',
+    '#default_value' => ASU_DIR_UTILITIES_EMPLOYEE_TYPES_ENDPOINT,
+    '#description' => t('The URL of the employee types endpoint.'),
+    '#required' => TRUE,
+  );
+
+  $form['asu_dir_utilities_faculty_titles_endpoint'] = array(
+    '#type' => 'textfield',
+    '#title' => 'ASU Faculty Titles Endpoint',
+    '#default_value' => ASU_DIR_UTILITIES_FACULTY_TITLES_ENDPOINT,
+    '#description' => t('The URL of the faculty titles endpoint.'),
+    '#required' => TRUE,
+  );
+
+  $form['asu_dir_utilities_form_clear_cache'] = array(
+    '#type' => 'button',
+    '#value' => 'Clear caches for this module',
+    // Send in part of the form_state array to know if this is initial page load or not
+    '#click' => asu_dir_utilities_clear_cache($form_state['buttons']),
+  );
+
+
+  $form['#submit'][] = "asu_dir_utilities_admin_submit";
+  return system_settings_form($form);
+}
+
+
+/**
+ * Set configuration variables for asu_dir_utilities module
+ */
+function asu_dir_utilities_admin_submit($form, &$form_state) {
+  /*maybe clear the cache after submitting*/
+  variable_set('asu_dir_utilities_solr_endpoint', $form['asu_dir_utilities_solr_env']['#value']);
+  variable_set('asu_dir_utilities_tree_endpoint', $form['asu_dir_utilities_tree_endpoint']['#value']);
+  variable_set('asu_dir_utilities_employee_types_endpoint', $form['asu_dir_employee_types_endpoint']['#value']);
+  variable_set('asu_dir_utilities_isearch_url', $form['asu_dir_utilities_isearch_url']['#value']);
+  variable_set('asu_dir_utilities_faculty_titles_endpoint', $form['asu_dir_utilities_faculty_titles_endpoint']['#value']);
+  variable_set('asu_dir_utilities_solr_schema_endpoint', $form['asu_dir_utilities_solr_schema_endpoint']['#value']);
+}

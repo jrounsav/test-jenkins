@@ -1,0 +1,7 @@
+name = ASU Tweaks for Open Scholar
+description = Tweaks for ASU to Open Scholar.
+core = 7.x
+package = ASU
+version = 7.x
+;dependencies[] = asu_brand
+;files[] = plugins/asu_brand_os_box.footer.inc

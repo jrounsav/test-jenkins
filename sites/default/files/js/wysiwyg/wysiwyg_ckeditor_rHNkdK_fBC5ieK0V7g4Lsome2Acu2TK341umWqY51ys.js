@@ -1,0 +1,1 @@
+window.CKEDITOR_BASEPATH = '/newscholar/profiles/openscholar/libraries/ckeditor/';

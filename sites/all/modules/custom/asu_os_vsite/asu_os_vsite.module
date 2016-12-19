@@ -1,0 +1,1150 @@
+<?php
+/**
+ * @file
+ * Code for ASU Open Scholar VSite integrations and fixes.
+ */
+
+
+/**
+ * @file asu_os_vsite.module
+ *
+ */
+
+
+/*****************************************************************************
+ HOOKS
+******************************************************************************/
+
+/**
+ * Implements hook_menu().
+ */
+function asu_os_vsite_menu() {
+
+  $items = array();
+
+  $items['admin/config/openscholar/asu_os_vsite'] = array(
+    'title' => 'ASU OpenScholar vSite settings',
+    'description' => 'Configure ASU OpenScholar vSite settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('asu_os_vsite_admin_settings'),
+    'access arguments' => array('administer asu_os_vsite'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'asu_os_vsite.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function asu_os_vsite_permission() {
+
+  return array(
+    'administer asu_os_vsite' => array(
+      'title' => t('Administer ASU OpenScholar vSite'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_vsite_og_node_type_info().
+ */
+function asu_os_vsite_vsite_og_node_type_info(){
+
+  // Add our custom vsite type. See asu_os_lab_site Features module for
+  // creation of that content type.
+  return array(
+    'lab' => 'group',
+  );
+}
+
+/**
+ * Implements hook_node_presave().
+ */
+function asu_os_vsite_node_presave($node) {
+
+  // Set the use_custom_domain value we stashed in a session variable during
+  // submit.
+  if ($node->is_new && in_array($node->type, variable_get('subsite_bundles',array('professional','project', 'lab')))) {
+
+    $custom_domain_value = isset($_SESSION['use_custom_domain']) ? $_SESSION['use_custom_domain'] : 'none';
+
+    $node->use_custom_domain[LANGUAGE_NONE][0]['value'] = $custom_domain_value;
+  }
+
+  unset($_SESSION['use_custom_domain']);
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function asu_os_vsite_views_api() {
+  list($module, $api) = func_get_args();
+  if ($module == "views" && $api == "views_default") {
+    return array("api" => "3.0");
+  }
+}
+
+/**
+ * Implementation of hook_views_default_views().
+ *
+ * Provide default view for Custom Domain Requests admin UI implemented at
+ * admin/content/custom-domains .
+ */
+function asu_os_vsite_views_default_views() {
+
+  $export = array();
+
+  $view = new view();
+  $view->name = 'custom_domains';
+  $view->description = '';
+  $view->tag = 'default';
+  $view->base_table = 'node';
+  $view->human_name = 'Custom Domains';
+  $view->core = 7;
+  $view->api_version = '3.0';
+  $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+  /* Display: Master */
+  $handler = $view->new_display('default', 'Master', 'default');
+  $handler->display->display_options['title'] = 'Custom Domains';
+  $handler->display->display_options['use_more_always'] = FALSE;
+  $handler->display->display_options['access']['type'] = 'perm';
+  $handler->display->display_options['access']['perm'] = 'change vsite domain';
+  $handler->display->display_options['cache']['type'] = 'none';
+  $handler->display->display_options['query']['type'] = 'views_query';
+  $handler->display->display_options['exposed_form']['type'] = 'basic';
+  $handler->display->display_options['pager']['type'] = 'full';
+  $handler->display->display_options['pager']['options']['items_per_page'] = '20';
+  $handler->display->display_options['style_plugin'] = 'table';
+  $handler->display->display_options['style_options']['columns'] = array(
+    'views_bulk_operations' => 'views_bulk_operations',
+    'title' => 'title',
+    'use_custom_domain' => 'use_custom_domain',
+    'type' => 'type',
+    'created' => 'created',
+    'changed' => 'changed',
+    'name' => 'name',
+  );
+  $handler->display->display_options['style_options']['default'] = 'created';
+  $handler->display->display_options['style_options']['info'] = array(
+    'views_bulk_operations' => array(
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'title' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'use_custom_domain' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'type' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'created' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'desc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'changed' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'desc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+    'name' => array(
+      'sortable' => 1,
+      'default_sort_order' => 'asc',
+      'align' => '',
+      'separator' => '',
+      'empty_column' => 0,
+    ),
+  );
+  /* Relationship: Content: Author */
+  $handler->display->display_options['relationships']['uid']['id'] = 'uid';
+  $handler->display->display_options['relationships']['uid']['table'] = 'node';
+  $handler->display->display_options['relationships']['uid']['field'] = 'uid';
+  /* Field: Bulk operations: Content */
+  $handler->display->display_options['fields']['views_bulk_operations']['id'] = 'views_bulk_operations';
+  $handler->display->display_options['fields']['views_bulk_operations']['table'] = 'node';
+  $handler->display->display_options['fields']['views_bulk_operations']['field'] = 'views_bulk_operations';
+  $handler->display->display_options['fields']['views_bulk_operations']['label'] = 'Operations';
+  $handler->display->display_options['fields']['views_bulk_operations']['vbo_settings']['display_type'] = '0';
+  $handler->display->display_options['fields']['views_bulk_operations']['vbo_settings']['enable_select_all_pages'] = 1;
+  $handler->display->display_options['fields']['views_bulk_operations']['vbo_settings']['force_single'] = 0;
+  $handler->display->display_options['fields']['views_bulk_operations']['vbo_settings']['display_result'] = 1;
+  $handler->display->display_options['fields']['views_bulk_operations']['vbo_settings']['entity_load_capacity'] = '10';
+  $handler->display->display_options['fields']['views_bulk_operations']['vbo_operations'] = array(
+    'action::cp_content_assign_taxonomy_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::node_assign_owner_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::views_bulk_operations_delete_item' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::system_message_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::views_bulk_operations_script_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::flag_node_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::node_make_sticky_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::node_make_unsticky_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::views_bulk_operations_modify_action' => array(
+      'selected' => 1,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+      'settings' => array(
+        'show_all_tokens' => 1,
+        'display_values' => array(
+          'department::use_custom_domain' => 'department::use_custom_doimain',
+          'lab::use_custom_domain' => 'lab::use_custom_domain',
+          'personal::use_custom_domain' => 'personal::use_custom_domain',
+          'project::use_custom_domain' => 'project::use_custom_domain',
+        ),
+      ),
+    ),
+    'action::views_bulk_operations_argument_selector_action' => array(
+      'selected' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+      'settings' => array(
+        'url' => '',
+      ),
+    ),
+    'action::node_promote_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::node_publish_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::system_goto_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::node_unpromote_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::cp_content_remove_taxonomy_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::node_save_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::system_send_email_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::node_unpublish_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::node_unpublish_by_keyword_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+    'action::pathauto_node_update_action' => array(
+      'selected' => 0,
+      'use_queue' => 0,
+      'skip_confirmation' => 0,
+      'override_label' => 0,
+      'label' => '',
+    ),
+  );
+  /* Field: Content: Title */
+  $handler->display->display_options['fields']['title']['id'] = 'title';
+  $handler->display->display_options['fields']['title']['table'] = 'node';
+  $handler->display->display_options['fields']['title']['field'] = 'title';
+  $handler->display->display_options['fields']['title']['label'] = 'Namespace';
+  $handler->display->display_options['fields']['title']['alter']['word_boundary'] = FALSE;
+  $handler->display->display_options['fields']['title']['alter']['ellipsis'] = FALSE;
+  /* Field: Content: Use Custom Domain */
+  $handler->display->display_options['fields']['use_custom_domain']['id'] = 'use_custom_domain';
+  $handler->display->display_options['fields']['use_custom_domain']['table'] = 'field_data_use_custom_domain';
+  $handler->display->display_options['fields']['use_custom_domain']['field'] = 'use_custom_domain';
+  /* Field: Content: Type */
+  $handler->display->display_options['fields']['type']['id'] = 'type';
+  $handler->display->display_options['fields']['type']['table'] = 'node';
+  $handler->display->display_options['fields']['type']['field'] = 'type';
+  $handler->display->display_options['fields']['type']['label'] = 'Site Type';
+  /* Field: Content: Post date */
+  $handler->display->display_options['fields']['created']['id'] = 'created';
+  $handler->display->display_options['fields']['created']['table'] = 'node';
+  $handler->display->display_options['fields']['created']['field'] = 'created';
+  $handler->display->display_options['fields']['created']['date_format'] = 'os_time';
+  $handler->display->display_options['fields']['created']['second_date_format'] = 'os_time';
+  /* Field: Content: Updated date */
+  $handler->display->display_options['fields']['changed']['id'] = 'changed';
+  $handler->display->display_options['fields']['changed']['table'] = 'node';
+  $handler->display->display_options['fields']['changed']['field'] = 'changed';
+  $handler->display->display_options['fields']['changed']['date_format'] = 'os_time';
+  $handler->display->display_options['fields']['changed']['second_date_format'] = 'os_time';
+  /* Field: User: Name */
+  $handler->display->display_options['fields']['name']['id'] = 'name';
+  $handler->display->display_options['fields']['name']['table'] = 'users';
+  $handler->display->display_options['fields']['name']['field'] = 'name';
+  $handler->display->display_options['fields']['name']['relationship'] = 'uid';
+  $handler->display->display_options['fields']['name']['label'] = 'Author';
+  /* Sort criterion: Content: Post date */
+  $handler->display->display_options['sorts']['created']['id'] = 'created';
+  $handler->display->display_options['sorts']['created']['table'] = 'node';
+  $handler->display->display_options['sorts']['created']['field'] = 'created';
+  $handler->display->display_options['sorts']['created']['order'] = 'DESC';
+  /* Filter criterion: Content: Published */
+  $handler->display->display_options['filters']['status']['id'] = 'status';
+  $handler->display->display_options['filters']['status']['table'] = 'node';
+  $handler->display->display_options['filters']['status']['field'] = 'status';
+  $handler->display->display_options['filters']['status']['value'] = 1;
+  $handler->display->display_options['filters']['status']['group'] = 1;
+  $handler->display->display_options['filters']['status']['expose']['operator'] = FALSE;
+  /* Filter criterion: Content: Type */
+  $handler->display->display_options['filters']['type']['id'] = 'type';
+  $handler->display->display_options['filters']['type']['table'] = 'node';
+  $handler->display->display_options['filters']['type']['field'] = 'type';
+  $handler->display->display_options['filters']['type']['value'] = array(
+    'department' => 'department',
+    'lab' => 'lab',
+    'personal' => 'personal',
+    'project' => 'project',
+  );
+  $handler->display->display_options['filters']['type']['expose']['operator_id'] = 'type_op';
+  $handler->display->display_options['filters']['type']['expose']['label'] = 'Site Type';
+  $handler->display->display_options['filters']['type']['expose']['operator'] = 'type_op';
+  $handler->display->display_options['filters']['type']['expose']['identifier'] = 'type';
+  $handler->display->display_options['filters']['type']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    5 => 0,
+    6 => 0,
+    7 => 0,
+    4 => 0,
+    8 => 0,
+    9 => 0,
+    10 => 0,
+  );
+  /* Filter criterion: Content: Use Custom Domain (use_custom_domain) */
+  $handler->display->display_options['filters']['use_custom_domain_value']['id'] = 'use_custom_domain_value';
+  $handler->display->display_options['filters']['use_custom_domain_value']['table'] = 'field_data_use_custom_domain';
+  $handler->display->display_options['filters']['use_custom_domain_value']['field'] = 'use_custom_domain_value';
+  $handler->display->display_options['filters']['use_custom_domain_value']['value'] = array(
+    'all' => 'all',
+    'none' => 'none',
+    'pending' => 'pending',
+    'granted' => 'granted',
+  );
+  $handler->display->display_options['filters']['use_custom_domain_value']['exposed'] = TRUE;
+  $handler->display->display_options['filters']['use_custom_domain_value']['expose']['operator_id'] = 'use_custom_domain_value_op';
+  $handler->display->display_options['filters']['use_custom_domain_value']['expose']['label'] = 'Custom Domain Status';
+  $handler->display->display_options['filters']['use_custom_domain_value']['expose']['operator'] = 'use_custom_domain_value_op';
+  $handler->display->display_options['filters']['use_custom_domain_value']['expose']['identifier'] = 'use_custom_domain_value';
+  $handler->display->display_options['filters']['use_custom_domain_value']['expose']['remember_roles'] = array(
+    2 => '2',
+    1 => 0,
+    3 => 0,
+    5 => 0,
+    6 => 0,
+    7 => 0,
+    4 => 0,
+    8 => 0,
+    9 => 0,
+    10 => 0,
+  );
+  $handler->display->display_options['filters']['use_custom_domain_value']['expose']['reduce'] = TRUE;
+
+  /* Display: Page */
+  $handler = $view->new_display('page', 'Page', 'page');
+  $handler->display->display_options['path'] = 'admin/content/custom-domains';
+  $handler->display->display_options['menu']['type'] = 'tab';
+  $handler->display->display_options['menu']['title'] = 'Custom Domain Requests';
+  $handler->display->display_options['menu']['description'] = 'Custom Domain Requests admin page';
+  $handler->display->display_options['menu']['weight'] = '0';
+  $handler->display->display_options['menu']['context'] = 0;
+  $handler->display->display_options['menu']['context_only_inline'] = 0;
+
+  $export['asu_os_vsite_custom_domains'] = $view;
+  return $export;
+}
+
+/**
+ * Implements hook_mail()/
+ *
+ * @param $key
+ * @param $message
+ * @param $params
+ *
+ */
+function asu_os_vsite_mail($key, &$message, $params) {
+
+  GLOBAL $conf, $base_url;
+
+  switch ($key) {
+    case 'asu_os_vsite_custom_domain':
+      $message['subject'] = t('New custom domain request submitted on !base_url', array('!base_url' => $base_url));
+      $message['body'][] = t('A new custom domain request was submitted on !site_name (!base_url) to add subdomain !domain', array('!site_name' => $conf['site_name'], '!base_url' => $base_url, '!domain' => $params['domain']));
+      $message['body'][] = t('View details and update request status: ') . $base_url . '/admin/content/custom-domains';
+      $message['body'][] = '----------------------------------------';
+      $message['body'][] = t('Please add ') . str_replace(array('https://', 'http://'), $params['domain'] . '.[site-type].', $base_url);
+      $message['body'][] = t('As a Domain Alias in Pantheon,') . str_replace(array('https://', 'http://'), $params['domain'] . '<site-type>.', $base_url);
+      $message['body'][] = t('And as a subdomain in the vSite settings.');
+      $message['body'][] = '----------------------------------------';
+      break;
+  }
+}
+
+/*****************************************************************************
+ CALLBACKS
+******************************************************************************/
+
+/*****************************************************************************
+ FORMS
+******************************************************************************/
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function asu_os_vsite_form_vsite_register_form_alter(&$form, &$form_state, $form_id) {
+
+  $form['domain']['#weight'] = -2;
+  $form['use_custom_domain'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use custom domain'),
+    '#description' => t('Example: a URL value of "jdoe" for a faculty site would result in %url. For lab or project sites, "faculty" would be replaced with "lab" or "project" in the URL, respectively.', array('%url' => 'https://jdoe.faculty.' . preg_replace('#^https?://#', '', $GLOBALS['base_url']) )),
+    '#weight' => -1,
+  );
+
+  // We don't want to override the AJAX-based validation function for the domain
+  // field as the code we actually want to address is factored into functions
+  // that calls. No hooks to tap into, either. So rather than re-implement
+  // multiple functions from vsite_register, we'll just do a validation when
+  // the form is submitted to do our nslookup check for existing domains.
+  $form['#validate'][] = 'asu_os_vsite_vsite_register_form_validate';
+  // Put the submit first so we can line up values pre-creation.
+  array_unshift($form['#submit'], 'asu_os_vsite_vsite_register_form_submit');
+
+
+
+//dpm('alter');
+//dpm($form);
+
+  // TODO Adding of additional editor users... need to check they are faculty?
+
+
+  $form['user_fieldset']['existing_username']['#title'] = t("Add ASU User to this website");
+  $form['user_fieldset']['existing_username']['#autocomplete_path'] = 'autocomplete/asu/user';
+// TODO implement in submit validate
+//  $form['user_fieldset']['existing_username']['#element_validate'] = 'asu_userpicker_autocomplete_validate';
+  $form['user_fieldset']['existing_username']['#description'] = t("Type in a person's name, username, or e-mail address to search for their existing account or to automatically create their account if they have an ASURITE.");
+  $form['user_fieldset']['name']['#access'] = FALSE;
+  $form['user_fieldset']['first_name']['#access'] = FALSE;
+  $form['user_fieldset']['last_name']['#access'] = FALSE;
+  $form['user_fieldset']['mail']['#access'] = FALSE;
+  $form['user_fieldset']['password']['#access'] = FALSE;
+
+  // We replace the standard vsite_register_form_validate() callback and it's
+  // attendant function with our own versions.
+  unset($form['#validate'][0]);
+
+  // And remove the original submit handler. We'll do the work of that one, too.
+  unset($form['#submit'][1]);
+
+
+//  dpm($form);
+
+  // TODO alter add existing user field to use userpicker
+  // TODO hide linkages to add new user.
+
+  // TODO add custom validate function that does userpicker + special og user stuff?
+
+
+
+
+
+}
+
+/**
+ * Form validate handler.
+ *
+ * @see vsite_register_form_validate() - replaced original from which parts of
+ *   this were copied.
+ */
+function asu_os_vsite_vsite_register_form_validate(&$form, &$form_state) {
+
+  // Do lookup for namespace.base_url to see if it exists. Error if it does.
+  // Following has already been checked by vsite_register's AJAX validation
+  // callback: base_url/namespace.
+
+  $elem = $form_state['triggering_element']['#name'];
+
+  // Validates AJAX
+  if ($_GET['q'] == 'system/ajax') {
+    //if ($form_state['triggering_element']['#ajax']['callback'] == 'asu_os_vsite_register_ajax_validation' ||
+    //  $form_state['triggering_element']['#ajax']['callback'] == 'iqss_pinserver_register_ajax_validation'
+    //) {
+    //  // The AJAX callback validates just this element and return a message.
+    //  return;
+    //}
+    //elseif ($form_state['triggering_element']['#ajax']['callback'] != 'asu_os_vsite_register_ajax_available_presets') {
+    if ($form_state['triggering_element']['#ajax']['callback'] != 'asu_os_vsite_register_ajax_available_presets') {
+      // Otherwise, processes the complete form.
+      // @todo maybe this should happen after the validate? or at least duplicate its efforts.
+      return asu_os_vsite_register_ajax_submit_validation($form, $form_state);
+    }
+  }
+
+// TODO Do version of asu_userpicker_autocomplete_validate($element, &$form_state, $form)
+// that can be called from ajax and standard context in this function.
+
+  // Defaults to standard validation
+  $values = $form_state['values'];
+  foreach (asu_os_vsite_register_validate_elements($values, $form, $form_state) as $element => $msg) {
+    if ($msg) {
+      form_set_error($element, $msg);
+    }
+  }
+
+  if ($values['create_new_user']) {
+    // Tells javascript to switch to new user form instead of making user switch it again.
+    drupal_add_js(array('vsite_register' => array('new_user_clicked' => TRUE)), 'setting');
+  }
+
+}
+
+/**
+ * Validate callback; called when submit button is clicked and ajax is enabled.
+ *
+ * @see vsite_register_form_validate()
+ * @see asu_os_vsite_register_form_validate() - replaced original from which
+ *   this was copied.
+ */
+function asu_os_vsite_register_ajax_submit_validation(&$form, &$form_state) {
+  $values = $form_state['values'];
+  $valid = $commands = array();
+
+  foreach (asu_os_vsite_register_validate_elements($values, $form, $form_state) as $element => $msg) {
+    if ($msg) {
+      $html = theme('item_list', array('items' => array($msg), 'type' => 'ul', 'attributes' => array('class' => array('error'))));
+      $commands[] = ajax_command_html("#${element}-errors", $html);
+    }
+    else {
+      $valid[] = ajax_command_html("#${element}-errors", '');
+    }
+  }
+
+  // Prints new errors.
+  if (count($commands)) {
+    print ajax_render(array_merge($commands, $valid));
+    exit;
+  }
+}
+
+/**
+ * Form validate callback; may return array of errors.
+ *
+ * Errors can be handled as usual or ajax rendered.
+ *
+ * Exists as separate function because there's more logic than usual in choosing which elements need to validate
+ * based on the state of the form.
+ *
+ * @see vsite_register_validate_elements() - replaced original from which this
+ *   was copied.
+ *
+ * @param array $values
+ *   Form state's values array
+ *
+ * @return array
+ *   An indexed array keyed by element name and holding error messages.
+ */
+function asu_os_vsite_register_validate_elements($values, &$form = array(), &$form_state = array()) {
+
+  // Always checks domain and form.
+  $elements = array('domain', 'form');
+
+  // Checks existing user info.
+  if ($values['vicarious_user'] && !$values['create_new_user']) {
+    $elements = array_merge($elements, array('existing_username'));
+  }
+
+  $msgs = array();
+  foreach ($elements as $element) {
+    if ($errors = _asu_os_vsite_register_validate($element, $values, $form, $form_state)) {
+      $msgs[$element] = implode(' ', $errors);
+    }
+  }
+
+  return $msgs;
+}
+
+/**
+ * Form validate callback; checks all common values.
+ *
+ * Invoked in both:
+ *  - vsite_register_ajax_validation()
+ *  - vsite_register_form_validate()
+ *
+ * @see _vsite_register_validate() - replaced original from which this was copied.
+ *
+ * @param string $element
+ * 	Name of element to validate
+ * @param array $values
+ * 	values array from returned form state
+ *
+ * @return mixed
+ *   NULL if no errors, otherwise an array of strings for all errors found.
+ */
+function _asu_os_vsite_register_validate($element, &$values, &$form = array(), &$form_state = array()) {
+
+  $msg = array();
+  switch ($element) {
+
+    case 'domain':
+
+      $base_url = preg_replace('#^https?://#', '', $GLOBALS['base_url']);
+
+      // Use fully qualified domain names ending in a dot. This prevents the
+      // resolver from walking though all search domains and retrying the domain
+      // with the search domain appended.
+      $candidate_custom_domain = check_plain($values['domain']) . '.' . check_plain($base_url) . '.';
+
+      // Configured custom DNS per environ so we can avoid Pantheon wildcards.
+
+      // Check to see if this host name exists.
+      // Doesn't work in Pantheon.
+      //$exists = gethostbyname($candidate_custom_domain) != $candidate_custom_domain;
+
+      // So use the old stand-by.
+      $agent = "Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)";
+      $ch = curl_init();
+      curl_setopt ($ch, CURLOPT_URL,$candidate_custom_domain );
+      curl_setopt($ch, CURLOPT_USERAGENT, $agent);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch,CURLOPT_VERBOSE,false);
+      curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+      curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, FALSE);
+      curl_setopt($ch,CURLOPT_SSLVERSION,3);
+      curl_setopt($ch,CURLOPT_SSL_VERIFYHOST, FALSE);
+      //$page = curl_exec($ch);
+      //echo curl_error($ch);
+      $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+      curl_close($ch);
+      if ($httpcode >= 200 && $httpcode != 404) {
+        $exists = TRUE;
+      }
+      else {
+        $exists = FALSE;
+      }
+
+      if ($exists) {
+        $msg[] = t('URL %url is taken.  Please try another URL.', array('%url' => $candidate_custom_domain));
+      }
+
+
+      if (strlen($values['domain']) < 3 || !valid_url($values['domain']) || !_vsite_register_valid_url($values['domain'])) {
+        $msg[] = t('Invalid URL specified.');
+      }
+      if (($purl = purl_load(array('value' => $values['domain'], 'provider' => 'spaces_og'), TRUE)) || menu_get_item($values['domain'])) {
+        $msg[] = t('URL %url is taken.  Please choose another.', array('%url' => $values['domain']));
+      }
+      break;
+
+    // Checks that all dependent fields are provided.
+
+    case 'form':
+
+      // If "on behalf" is selected, but no user specified...
+      //if ($values['vicarious_user'] && !(strlen($values['existing_username']) || $values['create_new_user'])) {
+      if ($values['vicarious_user'] && !(strlen($values['existing_username']))) {
+        $msg[] = t('You have selected to create this site on behalf of another user.  Please specify an existing user or create a new account.');
+      }
+
+      // ASU Userpicker validations.
+
+      // Now have form and form_state
+      $msg[] = asu_os_vsite_asu_userpicker_autocomplete_validate($element, $form_state, $form);
+
+      break;
+
+  }
+
+  return (count($msg)) ? $msg : NULL;
+}
+
+/**
+ * Validation callback for a user_reference autocomplete element.
+ *
+ * This is 1 of 2 custom asu_userpicker validation routines.
+ *
+ * @see asu_userpicker_autocomplete_validate() where we lifted this from.
+ * @see asu_os_vsite_asu_userpicker_og_validate().
+ */
+function asu_os_vsite_asu_userpicker_autocomplete_validate($element, &$form_state, $form) {
+
+  // 1. Is this a valid local user?
+  // 2. Is this a valid asurite? (consult solr)
+
+  // Assumes Field API field...
+  //$field = field_widget_field($element, $form_state);
+  $field = NULL; // It's not, in this instnace, so just NULL it and avoid errors.
+  // If isn't a Field API field... fake it.
+  // Note: These fields can be set by changing a user field's
+  // '#autocomplete_path' to 'autocomplete/asu/user' and
+  // '#element_validate' to 'asu_userpicker_autocomplete_validate'
+  // with a hook_form_alter() in your code. TODO Better document this.
+  if (!$field) {
+    // We're not a Field API field, so fake these settings in.
+    // TODO Is there a better, less fakey way to do this?
+    $field['field_name'] = 'asu_userpicker'; // Used in static cache ID.
+    $field['settings'] = array(
+      // No Admin UI, but you can set manually. (See CONFIG section.)
+      'referenceable_roles' => unserialize(ASU_USERPICKER_REFERENCEABLE_ROLES),
+      'referenceable_status' => unserialize(ASU_USERPICKER_REFERENCEABLE_STATUS),
+      'view' =>
+        array(
+          // No Admin UI, but you can set manually. (See CONFIG section.)
+          'view_name' => ASU_USERPICKER_REFERENCEABLE_VIEW,
+          'display_name' => '',
+          'args' =>
+            array(),
+        ),
+    );
+  }
+  //$instance = field_widget_instance($element, $form_state);
+  $instance = NULL; // Again, just null it in this instance.
+  // If isn't a Field API managed field...
+  if (!$instance) {
+    // No Admin UI, but you can set manually. (See CONFIG section of README.)
+    $instance['label'] = ASU_USERPICKER_LABEL;
+  }
+
+  $value = $form_state['input']['existing_username'];
+  $uid = NULL;
+
+  if (!empty($value)) {
+    // Check whether we have an explicit "[uid:n]" input.
+    preg_match('/^(?:\s*|(.*) )?\[\s*uid\s*:\s*(\d+)\s*\]$/', $value, $matches);
+    if (!empty($matches)) {
+      // Explicit uid. Check that the 'name' part matches the actual name for
+      // the uid.
+      list(, $name, $uid) = $matches;
+      if (!empty($name)) {
+        $names = _asu_userpicker_get_user_names(array($uid));
+        if ($name != $names[$uid]) {
+          //form_error($element, t('%name: name mismatch. Please check your selection.', array('%name' => $instance['label'])));
+          return t('%name: name mismatch. Please check your selection.', array('%name' => $instance['label']));
+        }
+      }
+    }
+    else {
+      // No explicit uid (the submitted value was not populated by autocomplete
+      // selection). Get the uid of a referencable user from the entered name.
+      $options = array(
+        'string' => $value,
+        'match' => 'equals',
+        'limit' => 1,
+      );
+
+      $references = asu_userpicker_potential_references($field, $options);
+      // Found local user.
+      if ($references) {
+        // @todo The best thing would be to present the user with an
+        // additional form, allowing the user to choose between valid
+        // candidates with the same name. ATM, we pick the first
+        // matching candidate...
+        $uid = key($references);
+      }
+      // Check to see if $value is a valid ASURITE ID.
+      elseif ($asurite_user = asu_userpicker_asurite_exists($value, FALSE)) {
+
+
+        // Don't do anything, just let the validated asurite value through. In
+        // this architecture we can create the user in the submit function.
+
+
+      }
+      else {
+        return t('%name: found no valid user with that name.', array('%name' => $instance['label']));
+      }
+    }
+  }
+
+}
+
+/**
+ * Form submit handler.
+ */
+function asu_os_vsite_vsite_register_form_submit(&$form, &$form_state) {
+
+  // Configured custom domain field values as : [none, pending, granted]
+
+  // If use_custom_domain is checked...
+  // ...set in session variable and then check and get in hook_node_insert().
+  // This is why we have this submit handler at the front of the queue.
+  if ($form_state['values']['use_custom_domain']) {
+    $_SESSION['use_custom_domain'] = 'pending';
+
+    // We were getting duplicate emails. Guard against being triggered twice.
+    // TODO Consider wrapping other logic with this check.
+    if (!isset($form_state['additional_settings'])) {
+      $to = variable_get('asu_os_vsite_custom_domain_emails', 'mlsamuel@asu.edu, tthai1@mainex1.asu.edu');
+      $params['domain'] = $form_state['values']['domain'];
+      drupal_mail('asu_os_vsite', 'asu_os_vsite_custom_domain', $to, LANGUAGE_NONE, $params);
+    }
+
+  }
+  else {
+    $_SESSION['use_custom_domain'] = 'none';
+  }
+
+  // Create user and vSite.
+
+  // Let CAS create our new user based on ASURITE ID and mappings.
+  // Other attributes can be synced into place by CAS Attributes module when
+  // user logs in. Use that module's configs to set that up. See
+  // /admin/config/people/cas/attributes
+  // NOTE: field names in $asurite_user vary here between LDAP and Solr
+  // sourced records.
+
+  ctools_include('user', 'os');
+  ctools_include('vsite', 'vsite');
+  $values = &drupal_static('vsite_register_form_values');
+  $values = $form_state['values'];
+
+  // The site was created on the behalf of a new user.
+  $new_user = FALSE;
+
+  // If the specified user exists in Solr...
+  if ($values['vicarious_user'] && $values['existing_username']) {
+
+    // Query Solr again (good candidate for caching) for record.
+    $asurite_user = asu_userpicker_asurite_exists($values['existing_username'], FALSE);
+    $options['edit']['mail'] = $asurite_user['emailAddress'];
+    $options['edit']['field_first_name'][LANGUAGE_NONE][0]['value'] = $asurite_user['firstName'];
+    $options['edit']['field_last_name'][LANGUAGE_NONE][0]['value'] = $asurite_user['lastName'];
+    $new_user = cas_user_register($asurite_user['asuriteId'], $options);
+
+    // Add user to vsite.
+    module_load_include('inc', 'vsite', 'includes/user');
+    vsite_user_add($new_user);
+
+    // Loads that user account as site owner.
+    //$uid = $values['existing_username'];
+    //$site_owner = user_load($uid);
+    $site_owner = user_load_by_name($values['existing_username']);
+
+  }
+  else {
+    // Creates site for current logged in user. No need to create a new user.
+    global $user;
+    $site_owner = $user;
+  }
+
+  // Creates the vsite node.
+  $name = $purl = $values['domain'];
+  $author = $site_owner->uid;
+  $bundle = $values['bundle'];
+  $preset = $values['preset'];
+  $parent = $_POST['parent'] ? $_POST['parent'] : FALSE;
+  $visibility = isset($values['vsite_private']) ? $values['vsite_private'] : FALSE;
+  $form_state['additional_settings'] = empty($form_state['additional_settings']) ? array() : $form_state['additional_settings'];
+  $vsite = vsite_create_vsite($name, $purl, $author, $bundle, $preset, $parent, $visibility, $form_state['additional_settings']);
+
+  if ($vsite) {
+    $message = vsite_register_message($form, $values['domain']);
+    $commands[] = ajax_command_replace('#submit-suffix', $message);
+    $commands[] = ajax_command_remove('#edit-submit');
+
+    // Grant the proper roles to the user.
+    if ($new_user) {
+      //os_role_grant($site_owner->uid, 'vsite admin', $vsite->nid);
+      os_role_grant($site_owner->uid, 'vsite admin', $vsite->id);
+    }
+
+    // If we have gotten to this point, then the vsite registration was success.
+    // Clears the errors.
+    drupal_get_messages('error');
+  }
+  else {
+    $commands[] = _vsite_register_form_error();
+  }
+
+  // Calls any other submit functions here.
+  foreach ($form['#submit'] as $fnc) {
+    if (__FUNCTION__ !== $fnc) {
+      call_user_func($fnc, $form, $form_state);
+    }
+  }
+
+  // Check for a present queued og_tasks batch.
+  $batch =& batch_get();
+  if ($vsite && $batch) {
+    // Run all the batch commands right now.
+    $batch['progressive'] = FALSE;
+    batch_process();
+  }
+
+  print ajax_render($commands);
+  exit;
+
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ *
+ * Form for adding users to a site at [namepace/domain]/cp/users/add
+ * Add integration for asu_userpicker field.
+ *
+ * @see cp_user_form_og_ui_add_users_alter().
+ */
+function asu_os_vsite_form_og_ui_add_users_alter(&$form, &$form_state, $form_id) {
+
+  $form['og_user']['#title'] = t("Add ASU User to this website");
+  $form['og_user']['name']['#autocomplete_path'] = 'autocomplete/asu/user';
+  // In place of an element validate, we use a form-level validate on this which
+  // executes ahead of the standard validate handler. See bottom of function.
+  //$form['og_user']['name']['#element_validate'] = 'asu_os_vsite_asu_userpicker_og_autocomplete_validate';
+  $form['og_user']['name']['#description'] = t("Type in a person's name, username, or e-mail address to search for their existing account or to automatically create their account if they have an ASURITE.");
+  unset($form['og_user']['link_text']);
+
+  array_unshift($form['#validate'], 'asu_os_vsite_asu_userpicker_og_validate');
+}
+
+/**
+ * Validation handler for a user_reference OG add user validation.
+ *
+ * This is 2 of 2 custom asu_userpicker validation routines.
+ *
+ * @see asu_userpicker_autocomplete_validate() where we lifted this from.
+ * @see asu_os_vsite_asu_userpicker_autocomplete_validate().
+ * @see asu_os_vsite_form_og_ui_add_users_alter().
+ */
+function asu_os_vsite_asu_userpicker_og_validate(&$form_state, $form) {
+
+  // 1. Is this a valid local user?
+  // 2. Is this a valid asurite? (consult solr)
+
+  // Assumes Field API field...
+  //$field = field_widget_field($element, $form_state);
+  $field = NULL; // We're not a Field API element, so force this.
+  // If isn't a Field API field... fake it.
+  // Note: These fields can be set by changing a user field's
+  // '#autocomplete_path' to 'autocomplete/asu/user' and
+  // '#element_validate' to 'asu_userpicker_autocomplete_validate'
+  // with a hook_form_alter() in your code. TODO Better document this.
+  if (!$field) {
+    // We're not a Field API field, so fake these settings in.
+    // TODO Is there a better, less fakey way to do this?
+    $field['field_name'] = 'asu_userpicker'; // Used in static cache ID.
+    $field['settings'] = array(
+      // No Admin UI, but you can set manually. (See CONFIG section.)
+      'referenceable_roles' => unserialize(ASU_USERPICKER_REFERENCEABLE_ROLES),
+      'referenceable_status' => unserialize(ASU_USERPICKER_REFERENCEABLE_STATUS),
+      'view' =>
+        array(
+          // No Admin UI, but you can set manually. (See CONFIG section.)
+          'view_name' => ASU_USERPICKER_REFERENCEABLE_VIEW,
+          'display_name' => '',
+          'args' =>
+            array(),
+        ),
+    );
+  }
+  //$instance = field_widget_instance($element, $form_state);
+  $instance = NULL; // Again, we're not a Field API instance. So force this.
+  // If isn't a Field API managed field...
+  if (!$instance) {
+    // No Admin UI, but you can set manually. (See CONFIG section of README.)
+    $instance['label'] = ASU_USERPICKER_LABEL;
+  }
+
+
+  $value = $form_state['og_user']['name']['#value'];
+  $uid = NULL;
+
+  if (!empty($value)) {
+    // Check whether we have an explicit "[uid:n]" input.
+    preg_match('/^(?:\s*|(.*) )?\[\s*uid\s*:\s*(\d+)\s*\]$/', $value, $matches);
+    if (!empty($matches)) {
+      // Explicit uid. Check that the 'name' part matches the actual name for
+      // the uid.
+      list(, $name, $uid) = $matches;
+      if (!empty($name)) {
+        $names = _asu_userpicker_get_user_names(array($uid));
+        if ($name != $names[$uid]) {
+          //form_error($element, t('%name: name mismatch. Please check your selection.', array('%name' => $instance['label'])));
+          return t('%name: name mismatch. Please check your selection.', array('%name' => $instance['label']));
+        }
+      }
+    }
+    else {
+      // No explicit uid (the submitted value was not populated by autocomplete
+      // selection). Get the uid of a referencable user from the entered name.
+      $options = array(
+        'string' => $value,
+        'match' => 'equals',
+        'limit' => 1,
+      );
+
+      $references = asu_userpicker_potential_references($field, $options);
+      // Found local user.
+      if ($references) {
+        // @todo The best thing would be to present the user with an
+        // additional form, allowing the user to choose between valid
+        // candidates with the same name. ATM, we pick the first
+        // matching candidate...
+        $uid = key($references);
+      }
+      // Check to see if $value is a valid ASURITE ID.
+      elseif ($asurite_user = asu_userpicker_asurite_exists($value, FALSE)) {
+
+        // Let CAS create our new user based on ASURITE ID and mappings.
+        // Other attributes can be synced into place by CAS Attributes module when
+        // user logs in. Use that module's configs to set that up. See
+        // /admin/config/people/cas/attributes
+        // NOTE: field names in $asurite_user vary here between LDAP and Solr
+        // sourced records.
+
+//        ctools_include('user', 'os');
+//        ctools_include('vsite', 'vsite');
+        //$values = &drupal_static('vsite_register_form_values');
+
+        // The site was created on the behalf of a new user.
+        $new_user = FALSE;
+
+        // Query Solr again (good candidate for caching) for record.
+        $asurite_user = asu_userpicker_asurite_exists($value, FALSE);
+        $options['edit']['mail'] = $asurite_user['emailAddress'];
+        $options['edit']['field_first_name'][LANGUAGE_NONE][0]['value'] = $asurite_user['firstName'];
+        $options['edit']['field_last_name'][LANGUAGE_NONE][0]['value'] = $asurite_user['lastName'];
+        $new_user = cas_user_register($asurite_user['asuriteId'], $options);
+
+        // Add user to vsite.
+//        module_load_include('inc', 'vsite', 'includes/user');
+//        vsite_user_add($new_user);
+
+        // Loads that user account as site owner.
+        //$uid = $values['existing_username'];
+        //$site_owner = user_load($uid);
+        $acct = user_load_by_name($value);
+
+      }
+      else {
+        return t('%name: found no valid user with that name.', array('%name' => $instance['label']));
+      }
+    }
+  }
+
+  // Name value as the user id that was extracted from the entered input.
+  $form_state['og_user']['name'][LANGUAGE_NONE][0]['value'] = $uid;
+// TODO or do we need the user name?
+
+}
+
+/*****************************************************************************
+ INTERNAL
+******************************************************************************/
+
+/*****************************************************************************
+ THEME
+******************************************************************************/
+
+/*****************************************************************************
+ API
+******************************************************************************/
+
+/*****************************************************************************
+ DEVELOPER NOTES
+******************************************************************************/
+

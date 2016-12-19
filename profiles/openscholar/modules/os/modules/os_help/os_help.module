@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * The OpenScholar Help module provides inline help links with popup docs.
+ */
+
+/**
+ * Implements hook_process_HOOK for page.tpl.php.
+ */
+function os_help_process_page(&$vars) {
+  // Only continues for authenticated users.
+  if (user_is_anonymous()) {
+    return;
+  }
+
+  // Adds link for the `help` page region based on the current path.
+  module_load_include('inc', 'os_help');
+  $path = drupal_get_path_alias();
+  if ($variables = os_help_get_variables_from_id('path', $path)) {
+    $vars['page']['help'] = theme_link($variables);
+    drupal_add_css(drupal_get_path('module', 'os_help') . '/os_help.css');
+  }
+}
+
+/**
+ * Implements hook_form_FORM_ID_form_alter() for spaces_features_form
+ */
+function os_help_form_spaces_features_form_alter(&$form, &$form_state, $form_id) {
+  module_load_include('inc', 'os_help');
+  foreach ($form['spaces_features'] as $app => $element) {
+    if (isset($element['#type']) && $element['#type'] == 'select') {
+      if ($variables = os_help_get_variables_from_id('app', $app)) {
+        $form['spaces_features'][$app]['#description'] = theme_link($variables);
+      }
+    }
+  }
+}

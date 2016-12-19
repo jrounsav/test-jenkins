@@ -1,0 +1,12 @@
+name = ASU Brand for Open Scholar
+description = Integrates ASU Brand module with Open Scholar's Boxes implementation.
+core = 7.x
+package = ASU
+version = 7.x
+dependencies[] = boxes
+dependencies[] = asu_brand
+features[box][] = os_box_asu_brand
+features[ctools][] = boxes:box:1
+features[features_api][] = api:2
+files[] = plugins/asu_brand_os_box.header.inc
+files[] = plugins/asu_brand_os_box.footer.inc

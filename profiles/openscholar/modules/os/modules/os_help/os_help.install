@@ -1,0 +1,9 @@
+<?php
+
+/**
+ * Disables no-longer-used advanced_help module.
+ */
+function os_help_update_7000() {
+  module_disable(array('advanced_help'));
+  return t('Disabled module: @module', array('@module' => 'advanced_help'));
+}

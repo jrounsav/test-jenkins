@@ -1,0 +1,72 @@
+<?php
+// $Id$
+
+
+/**
+ * @file
+ * Code for the OS Presentations feature.
+ */
+
+include_once 'os_presentations.features.inc';
+
+/**
+ * Implements hook_os_app_info().
+ */
+function os_presentations_os_app_info() {
+  $apps = array();
+
+  $apps['os_presentations'] = array(
+    'path' => 'presentations',
+  	'nodetypes' => array(
+  	  'presentation',
+    ),
+    'views tabs' => array(
+      'os_presentations' => array('page'),
+    ),
+    'importers' => array(
+      'presentation' => array(
+        'csv' => 'os_presentation',
+      ),
+    ),
+    'browse_pages' => array(
+      'presentation' => array(
+        'url' => 'browse/presentations',
+        'title' => t('Presentations'),
+        'display_mode' => 'teaser',
+        'menu_item' => 'presentations',
+      ),
+    ),
+  );
+
+  return $apps;
+}
+
+/**
+ * Implements hook_vsite_og_node_type_info().
+ */
+function os_presentations_vsite_og_node_type_info() {
+  return array(
+    'presentation' => 'group content',
+  );
+}
+
+/**
+ * Implements hook_preprocess_node().
+ */
+function os_presentations_preprocess_node(&$vars) {
+  // Set the display_submitted value to FALSE.
+  if(isset($vars['type']) && $vars['type'] == 'presentation') {
+  	if(isset($vars['display_submitted'])) {
+      $vars['display_submitted'] = FALSE;
+  	}
+  }
+}
+
+/**
+ * Implements hook_os_entity_view_modes_alter
+ *
+ * Presentation teaser is one line long.  Sliding teaser makes no sense.
+ **/
+function os_presentations_os_entity_view_modes_alter(&$info) {
+  $info['node']['presentation'] = array_diff($info['node']['presentation'], array('slide_teaser'));
+}

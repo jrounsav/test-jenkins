@@ -1,0 +1,5 @@
+name = "ASU Role Provisioning Module"
+core = 7.x
+package = ASU
+description = "Automatically assign roles to a user, based on data returned from the Solr directory."
+dependencies[] = asu_dir_utilities

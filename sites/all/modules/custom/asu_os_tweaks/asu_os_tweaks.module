@@ -1,0 +1,68 @@
+<?php
+/**
+ * @file
+ * Code for miscellaneous ASU Open Scholar integrations and fixes.
+ */
+
+
+/**
+ * @file asu_os_tweaks.module
+ *
+ */
+
+
+/*****************************************************************************
+ HOOKS
+******************************************************************************/
+
+/**
+ * Module implements hook_cas_phpcas_alter().
+ *
+ * See cas.module's cas_phpcas_init() where
+ *   module_invoke_all('cas_phpcas_alter') is called as a hook rather than
+ *   a drupal_alter().
+ */
+function asu_os_tweaks_cas_phpcas_alter() {
+
+ $url = url(current_path(), array('https' => TRUE, 'query' => drupal_get_query_parameters(), 'absolute' => TRUE));
+
+ // HTTPS isn't being honored. Perhaps something in Context is rewriting
+ // elsewhere. So let's force it here.
+ $url = str_replace('http://', 'https://', $url);
+
+// die($url);
+
+ // Add HTTPS enforcement.
+ phpCAS::setFixedServiceURL($url);
+
+ // Also, a fix from https://www.drupal.org/node/1473060#comment-691215
+ // for issues with tickets and duplicate entry errors and infinite redirect
+ // loop goofiness.
+ phpCAS::setNoClearTicketsFromUrl();
+
+}
+
+/*****************************************************************************
+ CALLBACKS
+******************************************************************************/
+
+/*****************************************************************************
+ FORMS
+******************************************************************************/
+
+/*****************************************************************************
+ INTERNAL
+******************************************************************************/
+
+/*****************************************************************************
+ THEME
+******************************************************************************/
+
+/*****************************************************************************
+ API
+******************************************************************************/
+
+/*****************************************************************************
+ DEVELOPER NOTES
+******************************************************************************/
+
