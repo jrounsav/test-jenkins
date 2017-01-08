@@ -1,7 +1,10 @@
 # asu_scholar
-For OpenScholar additions that are specific to the ASU Faculty Pages project.
-Testing
+This folder contains OpenScholar additions that are specific to the ASU Faculty Pages project.
 
+## Explanation
+The `sites/` directory has been grabbed from the Drupal repo to allow for an easier Jenkins CI build process to take place.
+
+## Drupal sites Readme
 This directory structure contains the settings and configuration files specific
 to your site or sites and is an integral part of multisite configuration.
 
@@ -21,3 +24,4 @@ for additional information about obtaining and organizing extensions.
 
 See INSTALL.txt in the Drupal root for information about single-site
 installation or multisite configuration.
+
